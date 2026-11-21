@@ -55,11 +55,18 @@ export function completeMissionReward<T extends MissionRecord>(
     };
   }
 
-  const rewardXp = Math.max(0, Math.floor(Number(mission.xp) || 50));
-  const earnedCredits = Math.max(
-    SYSTEM_CONFIG.minimumMissionCredits,
-    Math.floor(rewardXp / 10)
-  );
+  const rawXp = mission.xp == null ? 50 : Number(mission.xp);
+
+const rewardXp = Number.isFinite(rawXp)
+  ? Math.max(0, Math.floor(rawXp))
+  : 0;
+
+const earnedCredits = Math.max(
+  SYSTEM_CONFIG.minimumMissionCredits,
+  Math.floor(
+    (rewardXp / 10) * SYSTEM_CONFIG.creditsPerTenXp
+  )
+);
 
   return {
     awarded: true,
