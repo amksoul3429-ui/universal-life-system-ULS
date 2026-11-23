@@ -73,7 +73,8 @@ export function unlockSystemItem(unlocked:string[],metrics:RewardMetrics,credits
  if(mode==="credits"&&credits<item.cost)return {ok:false as const,unlocked,credits,reason:"Not enough credits"};
  return {ok:true as const,unlocked:[...unlocked,id],credits:mode==="credits"?credits-item.cost:credits,reason:mode==="credits"?"Unlocked with credits":"Unlocked by milestone"};
 }
-\nexport function rewardSummary(values:unknown[],credits:number){
+
+export function rewardSummary(values:unknown[],credits:number){
  const rewards=values.map(normalizeReward).filter((r):r is RewardItem=>!!r);
  return {availableCredits:Math.max(0,Math.floor(credits)),totalRewards:rewards.length,available:rewards.filter(r=>r.status==="available").length,redeemed:rewards.filter(r=>r.status==="redeemed").length,fulfilled:rewards.filter(r=>r.status==="fulfilled").length,spent:rewards.filter(r=>r.status!=="available").reduce((n,r)=>n+r.cost,0)};
 }
