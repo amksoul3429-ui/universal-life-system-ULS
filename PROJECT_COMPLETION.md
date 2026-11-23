@@ -88,7 +88,8 @@ Core persistence and backup regression tests plus the production build are verif
 ### Scope note
 Part 3's agreed mission workflow, planner handoff, and reward rules are implemented and verified by automated tests and a production build. Full interactive testing on a physical phone/browser remains part of Part 13 — Integration & Production; it is not claimed as completed here.
 
-\n## Part 4 — Daily Planner
+
+## Part 4 — Daily Planner
 
 ### Delivered
 - Complete task lifecycle: create, edit, complete/reopen, and confirmed delete, with persistent local-first storage.
