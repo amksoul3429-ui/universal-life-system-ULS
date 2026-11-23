@@ -67,7 +67,10 @@ export function validateAppData(value: unknown): AppData {
 function parseStoredValue(raw: string): AppData {
   const parsed: unknown = JSON.parse(raw);
   // Versioned envelope is the current format; flat objects are the original ULS format.
-  if (isObject(parsed) && parsed.format === BACKUP_FORMAT && isObject(parsed.data)) {
+  if (isObject(parsed) && parsed.format === BACKUP_FORMAT) {
+    if (parsed.version !== BACKUP_VERSION || !isObject(parsed.data)) {
+      throw new Error("Unsupported stored data version");
+    }
     return validateAppData(parsed.data);
   }
   return validateAppData(parsed);
