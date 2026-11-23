@@ -248,7 +248,7 @@ Part 9's reward rules, achievement/unlock integrity, persistence, automated regr
 - Guided reflection prompt library with one-click prompt-to-editor handoff; prompts remain optional and do not restrict free writing.
 - Writing editor with a 30,000-character limit, live word/character counts, and blank-entry prevention.
 - Search across title, content, mood, category, and tags; filters for mood, category, favorites, and date range; clear-filter and empty-state handling.
-- Journal overview metrics: total entries, total words, unique writing days, current consecutive-day streak, and favorite count (favorite count is used by the engine even where not shown as a headline metric).
+- Journal overview metrics: total entries, total words, unique writing days, and current consecutive-day streak; favorite status is calculated for archive filtering.
 - Markdown export of the journal archive, including dates, mood, category, tags, prompts, and entry text.
 - Backward-compatible normalization retains existing legacy ULS journal IDs, titles, creation timestamps, content, and moods; older entries receive safe defaults for new metadata.
 - Journal records remain in the existing shared `journal` collection, the historical `uls-data-v1` storage key, cross-tab synchronization, and standard ARVENA backup/restore. No separate database or new storage key was introduced.
