@@ -1,6 +1,6 @@
 /** ARVENA reward economy: deterministic ranks, achievements and user-controlled redemption. */
 export type RewardItem = { id:string; title:string; created:string; description?:string; type?:string; cost:number; redeemed?:boolean; status:"available"|"redeemed"|"fulfilled"; redeemedAt?:string; fulfilledAt?:string };
-export type RewardMetrics = { missionsCompleted:number; coursesCompleted:number; lessonsCompleted:number; habitCheckIns:number; bestHabitStreak:number; goalsCompleted:number };
+export type RewardMetrics = { missionsCompleted:number; businessMissionsCompleted:number; coursesCompleted:number; lessonsCompleted:number; habitCheckIns:number; bestHabitStreak:number; goalsCompleted:number };
 export type Achievement = { id:string; title:string; description:string; category:"Missions"|"Knowledge"|"Evolution"|"Goals"; requirement:string; credits:number; xp:number; test:(m:RewardMetrics)=>boolean };
 export const RANKS = [
  {level:1,title:"Initiate",subtitle:"The journey begins"},
@@ -53,7 +53,27 @@ export function fulfillPersonalReward(values:unknown[],id:string,now=new Date().
  if(target.status!=="redeemed")return {ok:false as const,rewards,reason:"Only redeemed rewards can be marked fulfilled"};
  return {ok:true as const,rewards:rewards.map(r=>r.id===id?{...r,status:"fulfilled" as const,redeemed:true,fulfilledAt:now}:r),reason:"Reward marked fulfilled"};
 }
-export function rewardSummary(values:unknown[],credits:number){
+
+export type UnlockMode = "credits" | "milestone";
+export type SystemUnlock = {id:string;title:string;category:"Skill Path"|"Secret Archive"|"Knowledge Tree";rarity:"Common"|"Rare"|"Epic";description:string;reveal:string;cost:number;milestone:string;test:(m:RewardMetrics)=>boolean};
+export const SYSTEM_UNLOCKS:SystemUnlock[]=[
+ {id:"skill-deep-work",title:"Deep Work Skill",category:"Skill Path",rarity:"Common",description:"Unlock the focused-work skill track.",reveal:"A skill path for protecting attention, reducing task switching and completing meaningful work in focused sessions.",cost:80,milestone:"Complete 5 learning lessons",test:m=>m.lessonsCompleted>=5},
+ {id:"skill-study",title:"Focused Study Path",category:"Skill Path",rarity:"Rare",description:"Unlock a structured study mastery path.",reveal:"Build active recall, spaced revision, problem-solving stamina and exam review into a repeatable study system.",cost:120,milestone:"Complete 3 learning lessons",test:m=>m.lessonsCompleted>=3},
+ {id:"skill-business",title:"Business Builder Path",category:"Skill Path",rarity:"Rare",description:"Unlock the foundations of building a business.",reveal:"Explore customer problems, validation, simple offers, ethical selling and sustainable operations.",cost:150,milestone:"Complete 3 business missions",test:m=>m.businessMissionsCompleted>=3},
+ {id:"archive-discipline",title:"The Discipline Archive",category:"Secret Archive",rarity:"Rare",description:"Reveal a special field note on consistency.",reveal:"ARCHIVE NOTE 01 — Discipline is not intensity every day. It is returning to the chosen action after interruption, without turning one missed day into an identity.",cost:150,milestone:"Reach a 7-day habit streak",test:m=>m.bestHabitStreak>=7},
+ {id:"archive-strategy",title:"The Strategy Archive",category:"Secret Archive",rarity:"Epic",description:"Reveal a special field note on long-term execution.",reveal:"ARCHIVE NOTE 02 — A large goal becomes manageable when it is translated into milestones, each milestone into a mission, and each mission into the next visible action.",cost:200,milestone:"Complete 1 life goal",test:m=>m.goalsCompleted>=1},
+ {id:"tree-science",title:"Science & Engineering Tree",category:"Knowledge Tree",rarity:"Epic",description:"Unlock a subject progression tree for science and engineering.",reveal:"PROGRESSION TREE — Foundations → Core Principles → Applied Problem Solving → Advanced Synthesis. Add your own courses and prerequisites in Universal Knowledge to build this tree around your syllabus.",cost:180,milestone:"Complete 1 full course",test:m=>m.coursesCompleted>=1},
+ {id:"tree-business",title:"Business & Money Tree",category:"Knowledge Tree",rarity:"Epic",description:"Unlock a progression tree for business and financial capability.",reveal:"PROGRESSION TREE — Personal Finance → Market Research → Customer Validation → Business Model → Operations & Growth. Use it as a roadmap; it does not imply financial advice or automatic trading access.",cost:180,milestone:"Complete 3 business missions",test:m=>m.businessMissionsCompleted>=3},
+];
+export function unlockSystemItem(unlocked:string[],metrics:RewardMetrics,credits:number,id:string,mode:UnlockMode){
+ const item=SYSTEM_UNLOCKS.find(x=>x.id===id);
+ if(!item)return {ok:false as const,unlocked,credits,reason:"Unlock not found"};
+ if(unlocked.includes(id))return {ok:false as const,unlocked,credits,reason:"This item is already unlocked"};
+ if(mode==="milestone"&&!item.test(metrics))return {ok:false as const,unlocked,credits,reason:"The milestone has not been reached"};
+ if(mode==="credits"&&credits<item.cost)return {ok:false as const,unlocked,credits,reason:"Not enough credits"};
+ return {ok:true as const,unlocked:[...unlocked,id],credits:mode==="credits"?credits-item.cost:credits,reason:mode==="credits"?"Unlocked with credits":"Unlocked by milestone"};
+}
+\nexport function rewardSummary(values:unknown[],credits:number){
  const rewards=values.map(normalizeReward).filter((r):r is RewardItem=>!!r);
  return {availableCredits:Math.max(0,Math.floor(credits)),totalRewards:rewards.length,available:rewards.filter(r=>r.status==="available").length,redeemed:rewards.filter(r=>r.status==="redeemed").length,fulfilled:rewards.filter(r=>r.status==="fulfilled").length,spent:rewards.filter(r=>r.status!=="available").reduce((n,r)=>n+r.cost,0)};
 }
