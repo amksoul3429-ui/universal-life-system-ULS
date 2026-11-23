@@ -21,8 +21,8 @@ export default function KnowledgeLibrary({ courses, credits, onChange, onEconomy
     [courses],
   );
   const [selectedId, setSelectedId] = useState("");
-  const [courseEditor, setCourseEditor] = useState<KnowledgeCourse | null | false>(false);
-  const [lessonEditor, setLessonEditor] = useState<KnowledgeLesson | null | false>(false);
+  const [courseEditor, setCourseEditor] = useState<KnowledgeCourse | null>(null);\n  const [courseOpen, setCourseOpen] = useState(false);
+  const [lessonEditor, setLessonEditor] = useState<KnowledgeLesson | null>(null);\n  const [lessonOpen, setLessonOpen] = useState(false);
   const [activeLesson, setActiveLesson] = useState("");
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [feedback, setFeedback] = useState<Record<string, string>>({});
@@ -51,7 +51,7 @@ export default function KnowledgeLibrary({ courses, credits, onChange, onEconomy
     };
     onChange(old ? normalized.map(c => c.id === old.id ? next : c) : [...normalized, next]);
     setSelectedId(next.id);
-    setCourseEditor(false);
+    setCourseOpen(false);
   };
 
   const saveLesson = (form: HTMLFormElement) => {
@@ -83,7 +83,7 @@ export default function KnowledgeLibrary({ courses, credits, onChange, onEconomy
     onChange(normalized.map(c => c.id === current.id
       ? { ...c, lessons: old ? c.lessons.map(l => l.id === old.id ? lesson : l) : [...c.lessons, lesson], done: false, updatedAt: new Date().toISOString() }
       : c));
-    setLessonEditor(false);
+    setLessonOpen(false);
   };
 
   const unlock = (course: KnowledgeCourse, mode: "spend" | "milestone") => {
@@ -135,7 +135,7 @@ export default function KnowledgeLibrary({ courses, credits, onChange, onEconomy
           <h1>Knowledge Library</h1>
           <p>Build understanding from fundamentals to advanced mastery, one lesson at a time.</p>
         </div>
-        <button className="primary" onClick={() => setCourseEditor(null)}><Plus size={15} /> CREATE COURSE</button>
+        <button className="primary" onClick={() => { setCourseEditor(null); setCourseOpen(true); }}><Plus size={15} /> CREATE COURSE</button>
       </div>
 
       <div className="stats">
@@ -181,7 +181,7 @@ export default function KnowledgeLibrary({ courses, credits, onChange, onEconomy
               <div className="kl-course-header">
                 <div><span className="tag">{current.subject} · {current.level}</span><h2>{current.title}</h2><p>{current.description}</p></div>
                 <div className="actions">
-                  <button onClick={() => setCourseEditor(current)}>EDIT</button>
+                  <button onClick={() => { setCourseEditor(current); setCourseOpen(true); }}>EDIT</button>
                   <button onClick={() => deleteCourse(current)}><Trash2 size={15} /></button>
                 </div>
               </div>
@@ -193,7 +193,7 @@ export default function KnowledgeLibrary({ courses, credits, onChange, onEconomy
                 <b>COURSE LEARNING OUTCOMES</b>
                 {current.objectives.length ? <ul>{current.objectives.map((o, i) => <li key={i}>{o}</li>)}</ul> : <p className="muted">Add learning outcomes when editing this course.</p>}
               </div>
-              <div className="kl-lessons-heading"><h3>LESSONS</h3><button className="secondary" onClick={() => setLessonEditor(null)}><Plus size={14} /> ADD LESSON</button></div>
+              <div className="kl-lessons-heading"><h3>LESSONS</h3><button className="secondary" onClick={() => { setLessonEditor(null); setLessonOpen(true); }}><Plus size={14} /> ADD LESSON</button></div>
               {current.lessons.map((lesson, index) => (
                 <article className={"kl-lesson " + (activeLesson === lesson.id ? "open" : "")} key={lesson.id}>
                   <button className="kl-lesson-toggle" onClick={() => setActiveLesson(activeLesson === lesson.id ? "" : lesson.id)}>
@@ -204,7 +204,7 @@ export default function KnowledgeLibrary({ courses, credits, onChange, onEconomy
                   {activeLesson === lesson.id && (
                     <div className="kl-lesson-body">
                       <div className="kl-lesson-actions">
-                        <button className="secondary mini" onClick={() => setLessonEditor(lesson)}>EDIT LESSON</button>
+                        <button className="secondary mini" onClick={() => { setLessonEditor(lesson); setLessonOpen(true); }}>EDIT LESSON</button>
                         <button className="danger mini" onClick={() => deleteLesson(current, lesson)}>DELETE</button>
                       </div>
                       <p>{lesson.summary}</p>
@@ -234,7 +234,7 @@ export default function KnowledgeLibrary({ courses, credits, onChange, onEconomy
         </section>
       </div>
 
-      {courseEditor !== false && (
+      {courseOpen && (
         <div className="backdrop" onMouseDown={e => { if (e.target === e.currentTarget) setCourseEditor(false); }}>
           <form className="modal" onSubmit={e => { e.preventDefault(); saveCourse(e.currentTarget); }}>
             <div className="modalhead"><div><small>UNIVERSAL KNOWLEDGE</small><h2>{courseEditor ? "Edit course" : "Create course"}</h2></div><button type="button" onClick={() => setCourseEditor(false)}>×</button></div>
@@ -252,7 +252,7 @@ export default function KnowledgeLibrary({ courses, credits, onChange, onEconomy
         </div>
       )}
 
-      {lessonEditor !== false && current && (
+      {lessonOpen && current && (
         <div className="backdrop" onMouseDown={e => { if (e.target === e.currentTarget) setLessonEditor(false); }}>
           <form className="modal" onSubmit={e => { e.preventDefault(); saveLesson(e.currentTarget); }}>
             <div className="modalhead"><div><small>COURSE / {current.title}</small><h2>{lessonEditor ? "Edit lesson" : "Add lesson"}</h2></div><button type="button" onClick={() => setLessonEditor(false)}>×</button></div>
