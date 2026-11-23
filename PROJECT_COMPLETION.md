@@ -10,7 +10,7 @@ Only mark a part complete after implementation, automated build verification, an
 | 4 | Daily Planner | **COMPLETE — full planner workflow, eight planner regression tests, and production build verified** |
 | 5 | Dream Life | **COMPLETE — full goal lifecycle, milestone engine, Mission Control integration, seven goal regression tests, and production build verified** |
 | 6 | Universal Knowledge | **COMPLETE — universal course/lesson engine, prerequisite and credit unlocks, assessments, nine knowledge regression tests, and production build verified** |
-| 7 | Video Learning Studio | **COMPLETE — YouTube/Vimeo playback workspace, persisted video library, chapters, notes, transcript/narration text, supporting visuals/resources, curriculum links, eight video regression tests, and production build verified** |
+| 7 | Video Learning Studio | **COMPLETE — YouTube/Vimeo playback workspace plus automatic YouTube Data API discovery, lesson-specific search, ranked recommendations, saved video library, study tools, 10 video/discovery regression tests, and production build verified** |
 | 8 | Personal Evolution | **COMPLETE — habit tracking, skill development, identity traits, reflections, shared persistence, mission/planner integration, eight evolution tests, backup regression, and production build verified** |
 | 9 | Rewards & Achievements | Not started |
 | 10 | Personal Journal | Not started |
