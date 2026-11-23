@@ -11,7 +11,7 @@ const num=(v:unknown,min:number,max:number,d:number)=>typeof v==="number"&&Numbe
 export function normalizeEvolutionRecord(v:unknown):EvolutionRecord|null{
  if(!obj(v)||typeof v.id!=="string"||!v.id||typeof v.title!=="string"||!v.title.trim())return null;
  const common={id:v.id,title:v.title.trim(),created:str(v.created)};
- if(v.kind==="habit")return {...common,kind:"habit",description:str(v.description),category:str(v.category,"Personal"),frequency:(["Daily","Weekdays","Weekly"].includes(String(v.frequency))?v.frequency:"Daily") as HabitFrequency,targetPerWeek:num(v.targetPerWeek,1,7,7),active:v.active!==false,checkIns:Array.isArray(v.checkIns)?[...new Set(v.checkIns.filter((x):x is string=>typeof x==="string"&&/^\\d{4}-\\d{2}-\\d{2}$/.test(x)))].sort():[]};
+ if(v.kind==="habit")return {...common,kind:"habit",description:str(v.description),category:str(v.category,"Personal"),frequency:(["Daily","Weekdays","Weekly"].includes(String(v.frequency))?v.frequency:"Daily") as HabitFrequency,targetPerWeek:num(v.targetPerWeek,1,7,7),active:v.active!==false,checkIns:Array.isArray(v.checkIns)?[...new Set(v.checkIns.filter((x):x is string=>typeof x==="string"&&/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(x)))].sort():[]};
  if(v.kind==="skill")return {...common,kind:"skill",category:str(v.category,"General"),level:num(v.level,1,10,1),practiceMinutes:num(v.practiceMinutes,0,10000000,0),sessions:num(v.sessions,0,1000000,0),notes:str(v.notes),updatedAt:str(v.updatedAt,common.created)};
  if(v.kind==="trait")return {...common,kind:"trait",score:num(v.score,1,10,5),reflection:str(v.reflection),updatedAt:str(v.updatedAt,common.created)};
  if(v.kind==="reflection")return {...common,kind:"reflection",content:str(v.content),mood:str(v.mood,"Neutral")};
