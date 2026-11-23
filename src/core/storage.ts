@@ -17,6 +17,7 @@ export type AppData = {
   journal: CoreRecord[];
   videos: CoreRecord[];
   evolution: CoreRecord[];
+  achievementClaims: string[];
   xp: number;
   credits: number;
 };
@@ -63,6 +64,7 @@ export function validateAppData(value: unknown): AppData {
     journal: collection("journal"),
     videos: collection("videos"),
     evolution: collection("evolution"),
+    achievementClaims: Array.isArray(source.achievementClaims) ? [...new Set(source.achievementClaims.filter((x): x is string => typeof x === "string" && x.length <= 100))] : [],
     xp: safeNumber(source.xp),
     credits: safeNumber(source.credits),
   };
