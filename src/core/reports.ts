@@ -25,7 +25,6 @@ export function summarizeReports(data:ReportData,range:ReportRange={}){
  const count=(items:RecordLike[])=>filtered(items).length;
  const journalFiltered=journal.filter(x=>inRange(dateOnly(x.date||x.created),range));
  const checkins=habitCheckins.filter(c=>inRange(dateOnly(c.date||c.day||c.created),range));
- const completedCount=count(missionDone)+count(taskDone)+count(goalDone)+count(lessonDone);
  const categories=[
   {key:"Missions",value:count(missionDone)},
   {key:"Planner tasks",value:count(taskDone)},
