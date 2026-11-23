@@ -10,7 +10,7 @@ Only mark a part complete after implementation, automated build verification, an
 | 4 | Daily Planner | **COMPLETE — full planner workflow, eight planner regression tests, and production build verified** |
 | 5 | Dream Life | **COMPLETE — full goal lifecycle, milestone engine, Mission Control integration, seven goal regression tests, and production build verified** |
 | 6 | Universal Knowledge | **COMPLETE — universal course/lesson engine, prerequisite and credit unlocks, assessments, nine knowledge regression tests, and production build verified** |
-| 7 | Video Learning Studio | **COMPLETE — YouTube/Vimeo playback workspace, persisted video library, chapters, notes, transcript/narration text, supporting visuals/resources, curriculum links, seven video regression tests, and production build verified** |
+| 7 | Video Learning Studio | **COMPLETE — YouTube/Vimeo playback workspace, persisted video library, chapters, notes, transcript/narration text, supporting visuals/resources, curriculum links, eight video regression tests, and production build verified** |
 | 8 | Personal Evolution | Not started |
 | 9 | Rewards & Achievements | Not started |
 | 10 | Personal Journal | Not started |
@@ -176,9 +176,9 @@ The curriculum engine, authoring tools, lesson tracking, source-reference fields
 - Responsive desktop and mobile layouts.
 
 ### Verification evidence
-- Seven Video Learning Studio regression tests cover YouTube URL parsing and privacy-enhanced embeds, Vimeo playback URL generation, rejection of unsupported/insecure/malformed URLs, record normalization and resource filtering, watch-status transitions and summary aggregation, timestamp formatting, and safe embed derivation.
-- Combined regression suite: all **41 tests passed** (six Core System, four Missions, eight Daily Planner, seven Dream Life, nine Universal Knowledge, and seven Video Learning Studio tests).
-- GitHub Actions on commit `b1f36ad3d3ccadfa644884ebd344186478c473f5`: dependency installation, `npm test`, and `npm run build` — all **SUCCESS**.
+- Seven Video Learning Studio regression tests cover YouTube URL parsing and privacy-enhanced embeds, Vimeo playback URL generation, rejection of unsupported/insecure/malformed URLs, record normalization and resource filtering, watch-status transitions and summary aggregation, timestamp formatting, safe embed derivation, and video-library persistence/backup round-trip.
+- Combined regression suite: all **42 tests passed** (six Core System, four Missions, eight Daily Planner, seven Dream Life, nine Universal Knowledge, and seven Video Learning Studio tests).
+- GitHub Actions on commit `9678f0bef5f17689ad62d3d2a1453cc527d986f7`: dependency installation, `npm test`, and `npm run build` — all **SUCCESS**.
 - Verified workflow: [ARVENA build verification](https://github.com/amksoul3429-ui/universal-life-system-ULS/actions/runs/45152167661).
 
 ### Scope note
