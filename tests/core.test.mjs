@@ -69,3 +69,23 @@ test("saving and reloading uses a versioned envelope", () => {
   assert.equal(loaded.ok, true);
   if (loaded.ok) assert.deepEqual(loaded.value, validateAppData(sample));
 });
+
+
+test("video learning records persist through local storage and versioned backups", () => {
+  const withVideo = {
+    ...sample,
+    videos: [{ id: "v1", title: "Physics lecture", created: "2026-11-23", url: "https://youtu.be/dQw4w9WgXcQ", status: "Watched", notes: "Review vectors" }],
+  };
+  const saved = saveAppData(withVideo);
+  assert.equal(saved.ok, true);
+  const loaded = loadAppData();
+  assert.equal(loaded.ok, true);
+  if (loaded.ok) {
+    assert.equal(loaded.value.videos.length, 1);
+    assert.equal(loaded.value.videos[0].notes, "Review vectors");
+    const backup = createBackup(loaded.value);
+    const restored = parseBackup(backup);
+    assert.equal(restored.ok, true);
+    if (restored.ok) assert.deepEqual(restored.value.videos, loaded.value.videos);
+  }
+});
