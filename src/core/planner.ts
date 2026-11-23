@@ -24,7 +24,9 @@ export function sortPlannerTasks<T extends PlannerTask>(tasks: T[], mode: Planne
   return [...tasks].sort((a,b) => {
     if (mode === "priority") {
       const priority = (PRIORITY_ORDER[a.priority || "Medium"] ?? 2) - (PRIORITY_ORDER[b.priority || "Medium"] ?? 2);
-      return priority || (a.date || "").localeCompare(b.date || "") || validTime(a.startTime).localeCompare(validTime(b.startTime)) || a.title.localeCompare(b.title);
+      const timeA = validTime(a.startTime), timeB = validTime(b.startTime);
+      const timeOrder = !timeA && timeB ? 1 : timeA && !timeB ? -1 : timeA.localeCompare(timeB);
+      return priority || (a.date || "").localeCompare(b.date || "") || timeOrder || a.title.localeCompare(b.title);
     }
     if (mode === "title") return a.title.localeCompare(b.title);
     if (mode === "duration") return (Number(b.durationMinutes)||30) - (Number(a.durationMinutes)||30) || a.title.localeCompare(b.title);
