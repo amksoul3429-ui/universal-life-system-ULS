@@ -99,8 +99,6 @@ function App(){
 function Stat({icon:I,label,value}:{icon:any;label:string;value:any}){return <div className="stat"><I size={19}/><div><small>{label}</small><b>{value}</b></div></div>}
 function Panel({title,children}:{title:string;children:any}){return <section className="panel"><h4>{title}</h4>{children}</section>}
 function Head({page,onAdd}:{page:Page;onAdd?:()=>void}){return <div className="head"><div><small>UNIVERSAL LIFE SYSTEM / {page.toUpperCase()}</small><h1>{labels[page]}</h1><p>Plan deliberately. Execute consistently. Review honestly.</p></div>{onAdd&&<button className="primary" onClick={onAdd}><Plus size={15}/> ADD NEW</button>}</div>}
-function Empty({text,onAdd}:{text:string;onAdd:()=>void}){return <div className="empty">{text}<br/><button className="textbtn" onClick={onAdd}>＋ Add a record</button></div>}
-function Actions({edit,del}:{edit:()=>void;del:()=>void}){return <div className="actions"><button onClick={edit}><Edit3 size={15}/></button><button onClick={del}><Trash2 size={15}/></button></div>}
 function Modal({page,initial,defaultDate,close,save}:{page:Page;initial:Item|null;defaultDate:string;close:()=>void;save:(f:HTMLFormElement)=>void}){
  const title=labels[page]||page;
  return <div className="backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)close()}}><form className="modal" onSubmit={e=>{e.preventDefault();save(e.currentTarget)}}><div className="modalhead"><div><small>ULS / RECORD</small><h2>{initial?'Edit record':title}</h2></div><button type="button" onClick={close}><X/></button></div>
