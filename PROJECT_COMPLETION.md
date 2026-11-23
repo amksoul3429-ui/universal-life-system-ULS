@@ -15,7 +15,7 @@ Only mark a part complete after implementation, automated build verification, an
 | 9 | Rewards & Achievements | **COMPLETE — shared reward economy, nine activity-based achievements, eight XP ranks, seven milestone/credit unlocks, real-life reward redemption lifecycle, backward-compatible persistence, 10 reward/storage regression checks, and production build verified** |
 | 10 | Personal Journal | **COMPLETE — full journal editor/archive, prompts, metadata, filters, statistics, export, legacy compatibility, eight journal regression tests, and production build verified** |
 | 11 | System Reports | **COMPLETE — report engine, cross-module aggregation, date filters, CSV export, five regression tests, and production build verified** |
-| 12 | Settings & Security | **IMPLEMENTED — awaiting automated tests and production build verification** |
+| 12 | Settings & Security | **COMPLETE — dedicated settings/security workspace, backup/restore, permissions, capability disclosure, future-version data protection, three new regression tests, and production build verified** |
 | 13 | Integration & Production | Not started |
 
 ## Part 1 — Command Center
@@ -308,8 +308,10 @@ Part 11's report engine, shared-data integration, date filtering, CSV export, re
 - Existing app collections, progression values, legacy data and the historical storage key are preserved; no account, cloud service, encryption or external integration is falsely represented as active.
 
 ### Verification
-- New Core System regression checks cover future-version overwrite protection, explicit reset of a protected future-version envelope, and rejection of unrelated backup data.
-- Awaiting GitHub Actions `npm ci`, full automated test suite, and `npm run build`.
+- Three new Core System regression checks cover future-version overwrite protection, explicit reset of a protected future-version envelope, and rejection of unrelated backup data.
+- Combined automated regression suite: **79 tests passed, 0 failed**.
+- GitHub Actions on final Part 12 commit `9dea4809b6fe3f83bea59f1003ff2d1379869709`: `npm ci`, `npm test`, and `npm run build` — all **SUCCESS**.
+- Verified workflow: [ARVENA build verification](https://github.com/amksoul3429-ui/universal-life-system-ULS/actions/runs/45171086552).
 
 ### Scope note
 This is local-device protection, not account security or encrypted storage. There is no login, remote sync, server-side recovery, or encryption at rest in this build. Browser notification permission can be managed by the browser, but ARVENA cannot revoke a permission that the browser has granted. Physical browser/Android acceptance remains part of Part 13 — Integration & Production.
