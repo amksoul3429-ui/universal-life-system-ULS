@@ -3,7 +3,7 @@ import CommandCenter from './components/CommandCenter';
 import MissionControl from './components/MissionControl';
 import {normalizeMission,transitionMission,assignMissionToPlanner,missionReward} from './core/missions';
 import './components/MissionControl.css';
-import {getLevel,xpIntoLevel,completeMissionReward,redeemReward} from './core/system';
+import {getLevel,xpIntoLevel,redeemReward} from './core/system';
 import {loadAppData,saveAppData,createBackup,parseBackup,subscribeToExternalChanges} from './core/storage';
 import {getNotificationAccess,requestNotificationAccess,sendSystemNotification,SYSTEM_CAPABILITIES} from './core/permissions';
 import {Activity,BookOpen,CalendarDays,Check,ChevronRight,Compass,Download,Edit3,Flame,LayoutDashboard,Menu,Plus,Settings,Sparkles,Target,Trash2,Trophy,Upload,Wallet,X,Zap} from 'lucide-react';
