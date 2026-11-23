@@ -10,7 +10,7 @@ const clamp=(value:number)=>Math.min(100,Math.max(0,Number(value)||0));
 
 export default function CommandCenter({data,level,xpIntoLevel,onOpen,onNavigate,onToggleTask}:Props){
  const now=new Date(),today=dateKey(now),tasks=data.tasks.filter(t=>t.date===today),done=tasks.filter(t=>t.done).length;
- const missions=data.missions.filter(m=>!m.done),goals=data.goals,learning=data.knowledge;
+ const missions=data.missions.filter(m=>m.status==='Active'),completedMissions=data.missions.filter(m=>m.done||m.status==='Completed').length,goals=data.goals,learning=data.knowledge;
  const learningDone=learning.filter(k=>k.done).length,goalAverage=goals.length?Math.round(goals.reduce((sum,g)=>sum+clamp(g.progress),0)/goals.length):0;
  const upcoming=[...data.missions.filter(m=>!m.done&&m.deadline&&m.deadline>=today).map(m=>({id:m.id,title:m.title,date:m.deadline,type:'Mission'})),...data.tasks.filter(t=>!t.done&&t.date&&t.date>today).map(t=>({id:t.id,title:t.title,date:t.date,type:'Task'})),...goals.filter(g=>g.target&&g.target>=today).map(g=>({id:g.id,title:g.title,date:g.target,type:'Goal'}))].sort((a,b)=>a.date.localeCompare(b.date)).slice(0,4);
  const daysLeft=(date:string)=>Math.round((new Date(date+'T00:00:00').getTime()-new Date(today+'T00:00:00').getTime())/86400000);
@@ -21,7 +21,7 @@ export default function CommandCenter({data,level,xpIntoLevel,onOpen,onNavigate,
    <div className="cc-level"><div className="cc-level-icon"><Zap size={25}/></div><small>OPERATOR LEVEL</small><strong>{level}</strong><span>{xpIntoLevel} / 500 XP</span><div className="cc-track"><i style={{width:(xpIntoLevel/5)+'%'}}/></div></div>
   </section>
   <section className="cc-stats">
-   <article><Target/><small>ACTIVE MISSIONS</small><strong>{missions.length}</strong><span>{data.missions.length-missions.length} completed</span></article>
+   <article><Target/><small>ACTIVE MISSIONS</small><strong>{missions.length}</strong><span>{completedMissions} completed</span></article>
    <article><Check/><small>TODAY'S TASKS</small><strong>{done}/{tasks.length}</strong><span>{tasks.length?Math.round(done/tasks.length*100):0}% completed</span></article>
    <article><Trophy/><small>TOTAL EXPERIENCE</small><strong>{data.xp.toLocaleString()}</strong><span>XP earned</span></article>
    <article><Wallet/><small>AVAILABLE CREDITS</small><strong>{data.credits.toLocaleString()}</strong><span>Reward balance</span></article>
@@ -35,7 +35,7 @@ export default function CommandCenter({data,level,xpIntoLevel,onOpen,onNavigate,
    <section className="cc-card"><div className="cc-card-heading"><div><span className="cc-eyebrow">LONG-TERM DIRECTION</span><h2>Growth overview</h2></div><button onClick={()=>onNavigate('Dream Life')}>View goals <ChevronRight/></button></div>
     <div className="cc-metric"><div><span>Life goals</span><strong>{goals.length}</strong></div><div className="cc-track"><i style={{width:goalAverage+'%'}}/></div><small>{goalAverage}% average progress</small></div>
     <div className="cc-metric"><div><span>Learning library</span><strong>{learningDone}/{learning.length}</strong></div><div className="cc-track"><i style={{width:(learning.length?learningDone/learning.length*100:0)+'%'}}/></div><small>{learning.length?Math.round(learningDone/learning.length*100):0}% completed</small></div>
-    <div className="cc-metric"><div><span>Mission completion</span><strong>{data.missions.length?Math.round((data.missions.length-missions.length)/data.missions.length*100):0}%</strong></div><div className="cc-track"><i style={{width:(data.missions.length?(data.missions.length-missions.length)/data.missions.length*100:0)+'%'}}/></div><small>{data.missions.length-missions.length} of {data.missions.length} completed</small></div>
+    <div className="cc-metric"><div><span>Mission completion</span><strong>{data.missions.length?Math.round(completedMissions/data.missions.length*100):0}%</strong></div><div className="cc-track"><i style={{width:(data.missions.length?completedMissions/data.missions.length*100:0)+'%'}}/></div><small>{completedMissions} of {data.missions.length} completed</small></div>
    </section>
   </div>
   <section className="cc-card cc-deadlines"><div className="cc-card-heading"><div><span className="cc-eyebrow">STAY AHEAD</span><h2>Upcoming deadlines</h2></div><Clock3/></div>
