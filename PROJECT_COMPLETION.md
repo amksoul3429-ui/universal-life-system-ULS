@@ -263,3 +263,28 @@ Part 9's reward rules, achievement/unlock integrity, persistence, automated regr
 
 ### Scope note
 Part 10's implementation, legacy compatibility, automated regression coverage, and production build are verified. Journal content is stored in browser local storage and is not encrypted in this build; users should protect their device and export backups appropriately. Full browser/Android interaction testing and cross-module acceptance remain part of Part 13 — Integration & Production.
+
+## Part 11 — System Reports
+
+### Delivered
+- Replaced the former four-stat placeholder with a dedicated System Reports dashboard connected directly to ARVENA's shared application data.
+- Cross-module reporting covers mission completion, planner task completion, life-goal completion, course and lesson completion, habit check-ins, Personal Evolution skills/practice/reflections, video watch records, reward redemptions, and journal entries/word counts.
+- Reporting periods include the last 7, 30, and 90 days, all time, and a custom date range. Changing the period recalculates the dashboard and its charts.
+- Execution rate is calculated from completed missions and planner tasks against the mission/task records recorded within the selected period; active and unfinished records remain in the denominator when their dates are available.
+- Activity timeline visualizes completed actions and habit check-ins by day for the selected reporting window (or the latest 14 days for all-time view).
+- Activity distribution compares the different tracked areas without mixing XP or credit balances into activity counts.
+- Development summary reports completed courses, tracked skills, logged skill-practice minutes, and evolution reflections.
+- Journal snapshot reports entry count and word count only; private journal text is not interpreted or transmitted.
+- CSV export includes reporting period, summary metrics, activity categories, and timeline values.
+- Report calculations are read-only and do not award XP/credits, modify source records, or create a second data store. Existing uls-data-v1 persistence, backup/restore, and legacy data remain unchanged.
+- Responsive dashboard layout supports desktop and narrow mobile screens.
+- Data-quality notes explain that historical reporting depends on timestamps saved by each module, while XP and credit balances are current lifetime balances rather than period-earned amounts. Reports are calculated locally in the browser.
+
+### Verification evidence
+- Five new System Reports regression tests cover cross-module aggregation, selected-period filtering, malformed/empty-data safety, bounded trend generation, and CSV export.
+- Combined automated regression suite: **76 tests passed, 0 failed**.
+- GitHub Actions on commit cefc7c143bb7bd460ca9b99a53968ab0ffd09471: npm ci, npm test, and npm run build — all **SUCCESS**.
+- Verified workflow: [ARVENA build verification](https://github.com/amksoul3429-ui/universal-life-system-ULS/actions/runs/45169757372).
+
+### Scope note
+Part 11's report engine, shared-data integration, date filtering, CSV export, regression coverage, and production build are verified. Metrics are calculated from locally recorded events; if a legacy record lacks a completion timestamp or usable date, it may not be assignable to a historical date range. No remote analytics, AI interpretation of private journal text, or automatic external data collection is connected. Full browser/Android end-to-end testing remains part of Part 13 — Integration & Production.
