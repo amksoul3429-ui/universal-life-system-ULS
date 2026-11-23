@@ -7,7 +7,7 @@ Only mark a part complete after implementation, automated build verification, an
 | 1 | Command Center | **COMPLETE — implementation, production build, and source review verified** |
 | 2 | Core System | **COMPLETE — implementation, six automated regression tests, and production build verified** |
 | 3 | Missions | **COMPLETE — full mission workflow, planner integration, four mission regression tests, and production build verified** |
-| 4 | Daily Planner | Not started |
+| 4 | Daily Planner | **COMPLETE — full planner workflow, eight planner regression tests, and production build verified** |
 | 5 | Dream Life | Not started |
 | 6 | Universal Knowledge | Not started |
 | 7 | Video Learning Studio | Not started |
@@ -87,3 +87,27 @@ Core persistence and backup regression tests plus the production build are verif
 
 ### Scope note
 Part 3's agreed mission workflow, planner handoff, and reward rules are implemented and verified by automated tests and a production build. Full interactive testing on a physical phone/browser remains part of Part 13 — Integration & Production; it is not claimed as completed here.
+
+\n## Part 4 — Daily Planner
+
+### Delivered
+- Complete task lifecycle: create, edit, complete/reopen, and confirmed delete, with persistent local-first storage.
+- Date-based scheduling with local-date-safe navigation, a seven-day selector, date picker, and full month calendar with per-day task/completion counts.
+- Task scheduling fields for date, start time, duration, category, priority, and notes; flexible unscheduled tasks remain supported.
+- Daily execution dashboard with planned, completed, remaining, scheduled-time, and completion-percentage metrics.
+- All-task view with date navigation; category and priority filters; completed-task visibility; overdue-only review; and sorting by time, priority, title, or duration.
+- Automatic overdue detection and direct overdue-only review, allowing overdue tasks to be edited/rescheduled or completed.
+- Schedule-overlap detection for unfinished timed tasks, with clear conflict summaries.
+- Mission Control integration remains intact: linked tasks stay linked, mission edits synchronize title/category/priority/deadline without changing the assigned time, and mission deletion removes linked tasks.
+- Completing a planner task records execution only; mission XP and credits remain awarded only through the mission's own completion flow.
+- Legacy planner task records remain compatible and are normalized safely at the planner boundary.
+- Responsive calendar, filters, task cards, and controls for mobile and desktop.
+
+### Verification evidence
+- Eight planner-specific automated tests cover legacy normalization, date/time/priority/duration validation, all sort modes, daily summaries, overdue detection, schedule conflicts, mission synchronization, and linked-task cleanup.
+- Combined regression suite: all **18 tests passed** (six Core System, four Missions, and eight Planner tests).
+- GitHub Actions on commit `eecaea2eec256ffc27b04ceaf930752a262edaea`: `npm ci`, `npm test`, and `npm run build` — all **SUCCESS**.
+- Verified workflow: [ARVENA build verification](https://github.com/amksoul3429-ui/universal-life-system-ULS/actions/runs/45147687139).
+
+### Scope note
+The Daily Planner's agreed task, scheduling, priority, calendar, and execution workflow is implemented and verified by automated tests and a production build. Full browser/device end-to-end testing remains part of Part 13 — Integration & Production. Browser push reminders and automatic recurring-task generation are not represented as active features in this milestone.
