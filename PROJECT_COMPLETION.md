@@ -8,7 +8,7 @@ Only mark a part complete after implementation, automated build verification, an
 | 2 | Core System | **COMPLETE — implementation, six automated regression tests, and production build verified** |
 | 3 | Missions | **COMPLETE — full mission workflow, planner integration, four mission regression tests, and production build verified** |
 | 4 | Daily Planner | **COMPLETE — full planner workflow, eight planner regression tests, and production build verified** |
-| 5 | Dream Life | Not started |
+| 5 | Dream Life | **COMPLETE — full goal lifecycle, milestone engine, Mission Control integration, seven goal regression tests, and production build verified** |
 | 6 | Universal Knowledge | Not started |
 | 7 | Video Learning Studio | Not started |
 | 8 | Personal Evolution | Not started |
@@ -112,3 +112,25 @@ Part 3's agreed mission workflow, planner handoff, and reward rules are implemen
 
 ### Scope note
 The Daily Planner's agreed task, scheduling, priority, calendar, and execution workflow is implemented and verified by automated tests and a production build. Full browser/device end-to-end testing remains part of Part 13 — Integration & Production. Browser push reminders and automatic recurring-task generation are not represented as active features in this milestone.
+
+
+## Part 5 — Dream Life
+
+### Delivered
+- Dedicated Dream Life workspace with goal overview metrics, average progress, status filters, and responsive goal cards.
+- Complete long-term goal creation, editing, deletion, and archiving with title, description, life area, priority, target date, reason/why, next concrete action, and progress.
+- Goal lifecycle states: Active, On Hold, Completed, and Archived, with resume/pause and completion controls.
+- Milestone management: add dated milestones, prevent duplicate milestone IDs/titles, complete/reopen milestones, and calculate goal progress from milestone completion whenever milestones exist.
+- Legacy goal records remain compatible; existing title, area, target date, and manual progress are normalized and retained.
+- Milestones can be converted into Mission Control missions. The mission retains goal/milestone references, uses the existing mission lifecycle and exactly-once reward flow, and is not rewarded merely for creating or checking off the milestone.
+- Shared Core System storage and backup automatically preserve the expanded goal and milestone fields without changing the historical storage key or removing existing goal data.
+- Command Center and System Reports continue to read the shared goals collection; goal progress and deadline information remain available to existing overview aggregations.
+
+### Verification evidence
+- Seven new goal regression tests cover legacy normalization, milestone-based progress, completion, reopening, duplicate milestone protection, goal status/archive transitions, and aggregate summaries.
+- Combined regression suite: all **25 tests passed** (six Core System, four Missions, eight Daily Planner, and seven Dream Life tests).
+- GitHub Actions on commit `b3daf90979e0bda2a86b0c39c12ce661b7878a09`: dependency installation, `npm test`, and `npm run build` — all **SUCCESS**.
+- Verified workflow: [ARVENA build verification](https://github.com/amksoul3429-ui/universal-life-system-ULS/actions/runs/45148366872).
+
+### Scope note
+Part 5's goal and milestone workflows, shared-data integration, and Mission Control handoff are implemented and verified by automated regression tests and a production build. Full browser/device end-to-end testing remains part of Part 13 — Integration & Production.
