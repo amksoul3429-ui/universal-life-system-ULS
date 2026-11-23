@@ -93,12 +93,18 @@ export function loadAppData(): StorageResult<AppData> {
 export function saveAppData(value: unknown): StorageResult<AppData> {
   try {
     const data = validateAppData(value);
+    const existingRaw = window.localStorage.getItem(STORAGE_KEY);
+    if (existingRaw) {
+      try {
+        const existing = parseStoredValue(existingRaw);
+        if (JSON.stringify(existing) === JSON.stringify(data)) return { ok: true, value: data };
+      } catch { /* Replace malformed storage only after an explicit valid save. */ }
+    }
     const envelope: BackupEnvelope = {
       format: BACKUP_FORMAT, version: BACKUP_VERSION, app: "ARVENA",
       exportedAt: new Date().toISOString(), data,
     };
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(envelope));
-    window.dispatchEvent(new CustomEvent("arvena:data-updated", { detail: data }));
     return { ok: true, value: data };
   } catch (error) {
     const quota = error instanceof DOMException && (error.name === "QuotaExceededError" || error.name === "NS_ERROR_DOM_QUOTA_REACHED");
