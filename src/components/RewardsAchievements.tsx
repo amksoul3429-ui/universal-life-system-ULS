@@ -1,17 +1,17 @@
-import {useState,type FormEvent} from "react";
+import {useMemo,useState,type FormEvent} from "react";
 import {Award,CheckCircle2,Gift,Lock,Medal,Plus,ShieldCheck,Sparkles,Trophy,Wallet,X,Zap} from "lucide-react";
-import {ACHIEVEMENTS,achievementState,operatorLevel,rankForXp,rewardSummary,type RewardMetrics,type RewardItem} from "../core/rewards";
+import {ACHIEVEMENTS,achievementState,operatorLevel,rankForXp,rewardSummary,normalizeReward,type RewardMetrics,type RewardItem} from "../core/rewards";
 import "./RewardsAchievements.css";
 type Props={rewards:RewardItem[];xp:number;credits:number;metrics:RewardMetrics;claimedAchievements:string[];onSaveReward:(reward:RewardItem)=>void;onDeleteReward:(id:string)=>void;onRedeem:(id:string)=>void;onFulfill:(id:string)=>void;onClaimAchievement:(id:string)=>void};
 const uid=()=>crypto.randomUUID();
 const categories=["Personal","Learning","Experience","Purchase","Milestone","Rest & Recovery"];
 export default function RewardsAchievements({rewards,xp,credits,metrics,claimedAchievements,onSaveReward,onDeleteReward,onRedeem,onFulfill,onClaimAchievement}:Props){
  const [showForm,setShowForm]=useState(false),[editing,setEditing]=useState<RewardItem|null>(null),[filter,setFilter]=useState("All");
- const level=operatorLevel(xp),rank=rankForXp(xp),into=xp%500,summary=rewardSummary(rewards,credits),achievements=achievementState(metrics,claimedAchievements);
+ const normalizedRewards=useMemo(()=>rewards.map(normalizeReward).filter((r):r is RewardItem=>!!r),[rewards]);\n const level=operatorLevel(xp),rank=rankForXp(xp),into=xp%500,summary=rewardSummary(normalizedRewards,credits),achievements=achievementState(metrics,claimedAchievements);
  const [title,setTitle]=useState(""),[description,setDescription]=useState(""),[type,setType]=useState("Personal"),[cost,setCost]=useState("50");
  const open=(item?:RewardItem)=>{setEditing(item||null);setTitle(item?.title||"");setDescription(item?.description||"");setType(item?.type||"Personal");setCost(String(item?.cost||50));setShowForm(true);};
  const save=(e:FormEvent)=>{e.preventDefault();const n=Math.floor(Number(cost));if(!title.trim()||!Number.isFinite(n)||n<1)return;onSaveReward({id:editing?.id||uid(),title:title.trim(),created:editing?.created||new Date().toISOString(),description:description.trim(),type,cost:n,status:editing?.status||"available",redeemed:editing?.redeemed||false,...(editing?.redeemedAt?{redeemedAt:editing.redeemedAt}:{}),...(editing?.fulfilledAt?{fulfilledAt:editing.fulfilledAt}:{})});setShowForm(false);setEditing(null);};
- const visible=rewards.filter(r=>filter==="All"|| (filter==="Available"?r.status==="available":filter==="Redeemed"?r.status==="redeemed":r.status==="fulfilled"));
+ const visible=normalizedRewards.filter(r=>filter==="All"|| (filter==="Available"?r.status==="available":filter==="Redeemed"?r.status==="redeemed":r.status==="fulfilled"));
  const claimable=achievements.filter(a=>a.claimable).length;
  return <div className="ra-page">
   <header className="ra-hero"><div><span className="ra-eyebrow">ARVENA / PROGRESSION SYSTEM</span><h1>Rewards & Achievements</h1><p>Progress should mean something. Earn experience, build your rank, unlock achievements and choose real-life rewards.</p></div><div className="ra-rank"><div className="ra-rank-icon"><Trophy size={27}/></div><small>CURRENT RANK</small><strong>{rank.title}</strong><span>Level {level} · {xp.toLocaleString()} XP</span><div className="ra-track"><i style={{width:(into/5)+"%"}}/></div><small>{into} / 500 XP to next level</small></div></header>
