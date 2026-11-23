@@ -1,10 +1,10 @@
 # ARVENA — 13-Part Development Tracker
 
-Only mark a part complete after implementation, build/test verification, and review.
+Only mark a part complete after implementation, automated build verification, and source-level functional review.
 
 | # | Part | Status |
 |---|---|---|
-| 1 | Command Center | Implementation committed; automated build verification pending |
+| 1 | Command Center | **COMPLETE — implementation, production build, and source review verified** |
 | 2 | Core System | Not started |
 | 3 | Missions | Not started |
 | 4 | Daily Planner | Not started |
@@ -20,16 +20,24 @@ Only mark a part complete after implementation, build/test verification, and rev
 
 ## Part 1 — Command Center
 
-Implemented on `main`:
-- ARVENA command identity and responsive dashboard layout.
-- Local-date daily overview and task completion progress.
-- Quick actions for missions, tasks, goals, learning, and journal.
-- Mission, goal, learning, XP, level, and credit summaries.
-- Upcoming mission, task, and goal deadlines.
-- Interactive task completion connected to the existing local data store.
-- Existing mission, planner, goal, learning, reward, and journal modules remain in place.
+### Delivered
+- ARVENA-branded command overview with current local date.
+- Operator level, current XP, progress toward next level, and credit balance.
+- At-a-glance active mission, today's task, total XP, and credit metrics.
+- Quick actions that open existing create flows for missions, planner tasks, life goals, learning items, and journal entries.
+- Today's execution board with live completion percentage and task toggles wired to existing application state.
+- Growth overview for life-goal progress, learning completion, and mission completion.
+- Upcoming deadlines aggregated from active missions, future planner tasks, and goal target dates.
+- Responsive desktop, tablet, and mobile styling.
+- Existing local-first data model and modules preserved; no replacement of the user's local data schema.
 
-Verification:
-- Source files committed and fetched back from GitHub successfully.
-- Automated GitHub Actions workflow added to run `npm ci` and `npm run build`.
-- Build result has not yet been reported; do not mark Part 1 verified complete until it passes.
+### Verification evidence
+- Source review: dashboard component, app integration, and responsive styles fetched from the main branch and inspected.
+- Dependency installation: GitHub Actions npm ci — SUCCESS.
+- Production build: GitHub Actions npm run build (tsc -b && vite build) — SUCCESS.
+- Workflow job: SUCCESS; setup, checkout, dependency installation, and build steps all completed successfully.
+- Verified commit: 17c098da8cb6be1c4d1a56f77b17662ee63c012c.
+- Workflow job: 137588084537.
+
+### Scope note
+The Command Center is complete against Part 1's agreed scope. Full browser/device end-to-end testing has not been performed in this environment; it remains part of later integration/production validation, not a claim made for this part.
