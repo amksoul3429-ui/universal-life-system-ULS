@@ -5,12 +5,15 @@ import DailyPlanner from './components/DailyPlanner';
 import DreamLife from './components/DreamLife';
 import KnowledgeLibrary from './components/KnowledgeLibrary';
 import VideoLearningStudio from './components/VideoLearningStudio';
-import PersonalEvolution from './components/PersonalEvolution';\nimport RewardsAchievements from './components/RewardsAchievements';
+import PersonalEvolution from './components/PersonalEvolution';
+import RewardsAchievements from './components/RewardsAchievements';
 import {syncMissionTask,removeMissionTasks} from './core/planner';
 import {normalizeMission,transitionMission,assignMissionToPlanner,missionReward} from './core/missions';
 import type { LifeGoal, GoalMilestone } from './core/goals';
 import './components/MissionControl.css';
-import {getLevel,xpIntoLevel} from './core/system';\nimport {claimAchievement,redeemPersonalReward,fulfillPersonalReward} from './core/rewards';\nimport {habitStreak} from './core/evolution';
+import {getLevel,xpIntoLevel} from './core/system';
+import {claimAchievement,redeemPersonalReward,fulfillPersonalReward} from './core/rewards';
+import {habitStreak} from './core/evolution';
 import {loadAppData,saveAppData,createBackup,parseBackup,subscribeToExternalChanges} from './core/storage';
 import {getNotificationAccess,requestNotificationAccess,sendSystemNotification,SYSTEM_CAPABILITIES} from './core/permissions';
 import {Activity,BookOpen,CalendarDays,Check,ChevronRight,Compass,Download,Edit3,Flame,LayoutDashboard,Menu,Plus,Settings,Sparkles,Target,Trash2,Trophy,Upload,Wallet,Video as VideoIcon,X,Zap} from 'lucide-react';
@@ -18,7 +21,8 @@ type Page='Overview'|'Missions'|'Planner'|'Dream Life'|'Evolution'|'Knowledge'|'
 type Item={id:string;title:string;created:string;[key:string]:any};
 type Data={missions:Item[];tasks:Item[];goals:Item[];knowledge:Item[];videos:Item[];evolution:Item[];rewards:Item[];journal:Item[];achievementClaims:string[];xp:number;credits:number};
 const blank:Data={missions:[],tasks:[],goals:[],knowledge:[],videos:[],evolution:[],rewards:[],journal:[],achievementClaims:[],xp:0,credits:0};
-const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')},id=()=>crypto.randomUUID();\nconst rewardMetrics=(d:Data)=>({missionsCompleted:d.missions.filter(m=>m.done||m.status==='Completed').length,coursesCompleted:d.knowledge.filter(k=>k.done).length,lessonsCompleted:d.knowledge.reduce((n,k)=>n+(Array.isArray(k.lessons)?k.lessons.filter((l:any)=>l.done).length:(k.done?1:0)),0),habitCheckIns:d.evolution.filter(e=>e.kind==='habit').reduce((n,h)=>n+(Array.isArray(h.checkIns)?h.checkIns.length:0),0),bestHabitStreak:Math.max(0,...d.evolution.filter(e=>e.kind==='habit').map(h=>habitStreak(h,today()))),goalsCompleted:d.goals.filter(g=>g.status==='Completed'||g.done===true).length});
+const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')},id=()=>crypto.randomUUID();
+const rewardMetrics=(d:Data)=>({missionsCompleted:d.missions.filter(m=>m.done||m.status==='Completed').length,coursesCompleted:d.knowledge.filter(k=>k.done).length,lessonsCompleted:d.knowledge.reduce((n,k)=>n+(Array.isArray(k.lessons)?k.lessons.filter((l:any)=>l.done).length:(k.done?1:0)),0),habitCheckIns:d.evolution.filter(e=>e.kind==='habit').reduce((n,h)=>n+(Array.isArray(h.checkIns)?h.checkIns.length:0),0),bestHabitStreak:Math.max(0,...d.evolution.filter(e=>e.kind==='habit').map(h=>habitStreak(h,today()))),goalsCompleted:d.goals.filter(g=>g.status==='Completed'||g.done===true).length});
 const sections:Page[]=['Overview','Missions','Planner','Dream Life','Evolution','Knowledge','Videos','Rewards','Journal','Reports','Settings'];
 const labels:Record<Page,string>={'Overview':'Command Center','Missions':'Mission Control','Planner':'Daily Planner','Dream Life':'Dream Life','Evolution':'Personal Evolution','Knowledge':'Knowledge Library','Videos':'Video Learning Studio','Rewards':'Rewards & Achievements','Journal':'Personal Journal','Reports':'System Reports','Settings':'Settings'};
 function App(){
