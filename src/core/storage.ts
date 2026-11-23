@@ -108,11 +108,14 @@ export function saveAppData(value: unknown): StorageResult<AppData> {
     if (existingRaw) {
       try {
         const parsedExisting: unknown = JSON.parse(existingRaw);
-        if (isObject(parsedExisting) && parsedExisting.format === BACKUP_FORMAT && parsedExisting.version === BACKUP_VERSION) {
+        if (isObject(parsedExisting) && parsedExisting.format === BACKUP_FORMAT) {
+          if (parsedExisting.version !== BACKUP_VERSION) {
+            return { ok: false, error: "Saved data was created by a newer ARVENA version. It was left untouched; open it with a compatible version or explicitly reset local data." };
+          }
           const existing = parseStoredValue(existingRaw);
           if (JSON.stringify(existing) === JSON.stringify(data)) return { ok: true, value: data };
         }
-      } catch { /* Replace malformed storage only after an explicit valid save. */ }
+      } catch { /* A deliberate valid save may replace malformed data after recovery. */ }
     }
     const envelope: BackupEnvelope = {
       format: BACKUP_FORMAT, version: BACKUP_VERSION, app: "ARVENA",
@@ -125,6 +128,16 @@ export function saveAppData(value: unknown): StorageResult<AppData> {
     return { ok: false, error: quota
       ? "Browser storage is full. Export a backup and free space before making more changes."
       : "Could not save data. Check browser storage permissions and try again." };
+  }
+}
+
+/** Removes the app data only after the user has explicitly confirmed a reset. */
+export function clearStoredAppData(): StorageResult<true> {
+  try {
+    window.localStorage.removeItem(STORAGE_KEY);
+    return { ok: true, value: true };
+  } catch {
+    return { ok: false, error: "Could not clear local data. Check browser storage permissions and try again." };
   }
 }
 
@@ -141,6 +154,10 @@ export function parseBackup(value: unknown): StorageResult<AppData> {
     if (value.version !== BACKUP_VERSION || !isObject(value.data)) {
       return { ok: false, error: "This backup version is not supported by this ARVENA build." };
     }
+    const knownCollections = ["missions", "tasks", "goals", "knowledge", "rewards", "journal", "videos", "evolution", "achievementClaims", "unlockedItems"];
+    const recognizable = knownCollections.some(key => Array.isArray(value.data[key])) ||
+      typeof value.data.xp === "number" || typeof value.data.credits === "number";
+    if (!recognizable) return { ok: false, error: "The backup does not contain recognizable ARVENA data." };
     return { ok: true, value: validateAppData(value.data) };
   }
   // Accept legacy ULS flat backups, but reject unrelated JSON files.
