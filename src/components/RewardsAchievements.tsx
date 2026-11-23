@@ -1,5 +1,5 @@
-import {useMemo,useState} from "react";
-import {Award,CheckCircle2,Gift,Lock,Medal,Plus,ShieldCheck,Sparkles,Star,Trophy,Wallet,X} from "lucide-react";
+import {useState,type FormEvent} from "react";
+import {Award,CheckCircle2,Gift,Lock,Medal,Plus,ShieldCheck,Sparkles,Trophy,Wallet,X,Zap} from "lucide-react";
 import {ACHIEVEMENTS,achievementState,operatorLevel,rankForXp,rewardSummary,type RewardMetrics,type RewardItem} from "../core/rewards";
 import "./RewardsAchievements.css";
 type Props={rewards:RewardItem[];xp:number;credits:number;metrics:RewardMetrics;claimedAchievements:string[];onSaveReward:(reward:RewardItem)=>void;onDeleteReward:(id:string)=>void;onRedeem:(id:string)=>void;onFulfill:(id:string)=>void;onClaimAchievement:(id:string)=>void};
@@ -10,7 +10,7 @@ export default function RewardsAchievements({rewards,xp,credits,metrics,claimedA
  const level=operatorLevel(xp),rank=rankForXp(xp),into=xp%500,summary=rewardSummary(rewards,credits),achievements=achievementState(metrics,claimedAchievements);
  const [title,setTitle]=useState(""),[description,setDescription]=useState(""),[type,setType]=useState("Personal"),[cost,setCost]=useState("50");
  const open=(item?:RewardItem)=>{setEditing(item||null);setTitle(item?.title||"");setDescription(item?.description||"");setType(item?.type||"Personal");setCost(String(item?.cost||50));setShowForm(true);};
- const save=(e:React.FormEvent)=>{e.preventDefault();const n=Math.floor(Number(cost));if(!title.trim()||!Number.isFinite(n)||n<1)return;onSaveReward({id:editing?.id||uid(),title:title.trim(),created:editing?.created||new Date().toISOString(),description:description.trim(),type,cost:n,status:editing?.status||"available",redeemed:editing?.redeemed||false,...(editing?.redeemedAt?{redeemedAt:editing.redeemedAt}:{}),...(editing?.fulfilledAt?{fulfilledAt:editing.fulfilledAt}:{})});setShowForm(false);setEditing(null);};
+ const save=(e:FormEvent)=>{e.preventDefault();const n=Math.floor(Number(cost));if(!title.trim()||!Number.isFinite(n)||n<1)return;onSaveReward({id:editing?.id||uid(),title:title.trim(),created:editing?.created||new Date().toISOString(),description:description.trim(),type,cost:n,status:editing?.status||"available",redeemed:editing?.redeemed||false,...(editing?.redeemedAt?{redeemedAt:editing.redeemedAt}:{}),...(editing?.fulfilledAt?{fulfilledAt:editing.fulfilledAt}:{})});setShowForm(false);setEditing(null);};
  const visible=rewards.filter(r=>filter==="All"|| (filter==="Available"?r.status==="available":filter==="Redeemed"?r.status==="redeemed":r.status==="fulfilled"));
  const claimable=achievements.filter(a=>a.claimable).length;
  return <div className="ra-page">
@@ -28,4 +28,4 @@ export default function RewardsAchievements({rewards,xp,credits,metrics,claimedA
   {showForm&&<div className="ra-overlay" onMouseDown={e=>{if(e.target===e.currentTarget)setShowForm(false);}}><form className="ra-form" onSubmit={save}><div className="ra-form-head"><div><small>PERSONAL REWARD</small><h2>{editing?"Edit reward":"Create a reward"}</h2></div><button type="button" onClick={()=>setShowForm(false)}><X/></button></div><label>Reward title<input required maxLength={100} value={title} onChange={e=>setTitle(e.target.value)} placeholder="e.g. Buy a new book"/></label><label>Why is this meaningful?<textarea rows={3} maxLength={500} value={description} onChange={e=>setDescription(e.target.value)} placeholder="Describe the experience, purchase or personal milestone."/></label><div className="ra-form-grid"><label>Category<select value={type} onChange={e=>setType(e.target.value)}>{categories.map(c=><option key={c}>{c}</option>)}</select></label><label>Credit cost<input type="number" min="1" max="1000000" required value={cost} onChange={e=>setCost(e.target.value)}/></label></div><div className="ra-form-actions"><button type="button" className="ra-icon-button" onClick={()=>setShowForm(false)}>CANCEL</button><button className="ra-button">{editing?"SAVE CHANGES":"CREATE REWARD"}</button></div></form></div>}
  </div>;
 }
-function ZapIcon(){return <Sparkles/>;}
+function ZapIcon(){return <Zap/>;}
