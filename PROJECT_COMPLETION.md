@@ -309,7 +309,7 @@ Part 11's report engine, shared-data integration, date filtering, CSV export, re
 
 ### Verification
 - Three new Core System regression checks cover future-version overwrite protection, explicit reset of a protected future-version envelope, and rejection of unrelated backup data.
-- Combined automated regression suite: **79 tests passed, 0 failed**.
+- Combined automated regression suite: **80 tests passed, 0 failed**.
 - GitHub Actions on final Part 12 commit `9dea4809b6fe3f83bea59f1003ff2d1379869709`: `npm ci`, `npm test`, and `npm run build` — all **SUCCESS**.
 - Verified workflow: [ARVENA build verification](https://github.com/amksoul3429-ui/universal-life-system-ULS/actions/runs/45171086552).
 
@@ -325,16 +325,18 @@ This is local-device protection, not account security or encrypted storage. Ther
 - Integrated the completed Part 1–12 application modules from the Universal Life System development repository into the ARVENA production repository, including Command Center, Missions, Planner, Goals, Knowledge, Video Learning Studio, Personal Evolution, Rewards, Journal, Reports and Settings & Security.
 - Preserved the ARVENA production identity and GitHub Pages base path `/ARVENA/`, the existing PWA manifest, service worker, and PWA registration entry point.
 - Preserved the historical `uls-data-v1` local storage key and backward-compatible data contract so existing browser-local records can be loaded by the integrated build.
+- Added explicit migration/backup preservation for the earlier ARVENA `activity` history collection, preventing the newer data validator from silently dropping those events.
+- Restored the ARVENA light/dark theme toggle and AERIS companion interface. AERIS remains in honest local-fallback mode until the user configures a secure Worker endpoint and access token; the microphone is activated only after a user tap.
 - Updated the production build workflow to run `npm ci`, all automated regression tests, and `npm run build` before uploading and deploying the GitHub Pages artifact.
 - Added release documentation covering workspaces, local development, testing, PWA installation, privacy limits and release acceptance.
 - Confirmed the production artifact includes `index.html`, hashed JS/CSS assets, `manifest.webmanifest`, `sw.js`, and the favicon.
 
 ### Automated verification and deployment
 - Production repository: `amksoul3429-ui/ARVENA`, branch `main`.
-- Release commit: `ceb1c2b5dc7d79f9ff8599b4058c44229da5e120`.
-- GitHub Actions run: [ARVENA build, tests and GitHub Pages deployment](https://github.com/amksoul3429-ui/ARVENA/actions/runs/45173715649) — build and deploy jobs **SUCCESS**.
+- Release code commit: `5d226ccff980cc61833456a870979f0ea0d1c2ca`.
+- GitHub Actions run: [ARVENA build, tests and GitHub Pages deployment](https://github.com/amksoul3429-ui/ARVENA/actions/runs/45174954596) — build and deploy jobs **SUCCESS**.
 - Automated regression suite: **79 tests passed, 0 failed**.
-- TypeScript check and Vite production build: **SUCCESS** (1,612 modules transformed).
+- TypeScript check and Vite production build: **SUCCESS** (1,613 modules transformed).
 - GitHub Pages deployment URL reported by the successful deploy job: https://amksoul3429-ui.github.io/ARVENA/.
 - Deployment artifact contains the production HTML, JS/CSS bundles, PWA manifest and service worker.
 
