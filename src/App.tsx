@@ -97,7 +97,6 @@ function App(){
  <div className="search"><input placeholder="Filter current section..." value={search} onChange={e=>setSearch(e.target.value)}/>{search&&<button onClick={()=>setSearch('')}><X size={13}/></button>}</div>
  </div>
 }
-function Stat({icon:I,label,value}:{icon:any;label:string;value:any}){return <div className="stat"><I size={19}/><div><small>{label}</small><b>{value}</b></div></div>}
 function Panel({title,children}:{title:string;children:any}){return <section className="panel"><h4>{title}</h4>{children}</section>}
 function Head({page,onAdd}:{page:Page;onAdd?:()=>void}){return <div className="head"><div><small>UNIVERSAL LIFE SYSTEM / {page.toUpperCase()}</small><h1>{labels[page]}</h1><p>Plan deliberately. Execute consistently. Review honestly.</p></div>{onAdd&&<button className="primary" onClick={onAdd}><Plus size={15}/> ADD NEW</button>}</div>}
 function Modal({page,initial,defaultDate,close,save}:{page:Page;initial:Item|null;defaultDate:string;close:()=>void;save:(f:HTMLFormElement)=>void}){
