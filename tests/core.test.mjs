@@ -110,10 +110,12 @@ test("Personal Evolution records persist in shared storage and backup round-trip
 
 test("achievement claims persist and duplicate claim IDs are normalized", () => {
   const data = validateAppData({ ...sample, achievementClaims: ["mission-first", "mission-first", 4, "course-first"], unlockedItems: ["skill-study", "skill-study", 4] });
-  assert.deepEqual(data.achievementClaims, ["mission-first", "course-first"]);\n  assert.deepEqual(data.unlockedItems, ["skill-study"]);
+  assert.deepEqual(data.achievementClaims, ["mission-first", "course-first"]);
+  assert.deepEqual(data.unlockedItems, ["skill-study"]);
   const saved = saveAppData({ ...sample, achievementClaims: data.achievementClaims, unlockedItems: data.unlockedItems });
   assert.equal(saved.ok, true);
   const loaded = loadAppData();
   assert.equal(loaded.ok, true);
-  if (loaded.ok) assert.deepEqual(loaded.value.achievementClaims, ["mission-first", "course-first"]);\n  if (loaded.ok) assert.deepEqual(loaded.value.unlockedItems, ["skill-study"]);
+  if (loaded.ok) assert.deepEqual(loaded.value.achievementClaims, ["mission-first", "course-first"]);
+  if (loaded.ok) assert.deepEqual(loaded.value.unlockedItems, ["skill-study"]);
 });
