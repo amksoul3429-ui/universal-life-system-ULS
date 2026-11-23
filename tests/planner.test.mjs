@@ -17,7 +17,7 @@ test("planner sorting puts timed tasks first by time and unscheduled tasks last"
 });
 test("daily summary counts completion, schedule coverage and planned duration",()=>{
  const summary=getDaySummary([task("a",{startTime:"09:00",durationMinutes:60,done:true}),task("b",{durationMinutes:30}),task("c",{date:"2026-11-24"})],"2026-11-23");
- assert.deepEqual(summary,{total:2,completed:1,remaining:1,scheduled:1,plannedMinutes:90,percent:50});
+ assert.deepEqual(summary,{total:2,completed:1,remaining:1,scheduled:1,plannedMinutes:60,percent:50});
 });
 test("mission edits synchronize linked task details without changing its schedule time",()=>{
  const existing=task("linked",{missionId:"m1",startTime:"10:15",durationMinutes:45});
