@@ -8,10 +8,9 @@ type Page='Overview'|'Missions'|'Planner'|'Dream Life'|'Evolution'|'Knowledge'|'
 type Item={id:string;title:string;created:string;[key:string]:any};
 type Data={missions:Item[];tasks:Item[];goals:Item[];knowledge:Item[];rewards:Item[];journal:Item[];xp:number;credits:number};
 const blank:Data={missions:[],tasks:[],goals:[],knowledge:[],rewards:[],journal:[],xp:0,credits:0};
-const KEY='uls-data-v1',today=()=>new Date().toISOString().slice(0,10),id=()=>crypto.randomUUID();
+const today=()=>new Date().toISOString().slice(0,10),id=()=>crypto.randomUUID();
 const sections:Page[]=['Overview','Missions','Planner','Dream Life','Evolution','Knowledge','Rewards','Journal','Reports','Settings'];
 const labels:Record<Page,string>={'Overview':'Command Center','Missions':'Mission Control','Planner':'Daily Planner','Dream Life':'Dream Life','Evolution':'Personal Evolution','Knowledge':'Knowledge Library','Rewards':'Rewards & Achievements','Journal':'Personal Journal','Reports':'System Reports','Settings':'Settings'};
-function read():Data{try{return {...blank,...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch{return blank}}
 function App(){
  const[loadResult]=useState(()=>loadAppData());
  const[data,setData]=useState<Data>(()=>loadResult.ok?loadResult.value:blank);
