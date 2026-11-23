@@ -22,7 +22,7 @@ export type AppData = {
   credits: number;
 };
 export const EMPTY_APP_DATA: AppData = {
-  missions: [], tasks: [], goals: [], knowledge: [], rewards: [], journal: [], videos: [], evolution: [], xp: 0, credits: 0,
+  missions: [], tasks: [], goals: [], knowledge: [], rewards: [], journal: [], videos: [], evolution: [], achievementClaims: [], xp: 0, credits: 0,
 };
 
 export type StorageResult<T> = { ok: true; value: T; warning?: string } | { ok: false; error: string };
