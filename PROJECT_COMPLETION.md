@@ -10,9 +10,9 @@ Only mark a part complete after implementation, automated build verification, an
 | 4 | Daily Planner | **COMPLETE — full planner workflow, eight planner regression tests, and production build verified** |
 | 5 | Dream Life | **COMPLETE — full goal lifecycle, milestone engine, Mission Control integration, seven goal regression tests, and production build verified** |
 | 6 | Universal Knowledge | **COMPLETE — universal course/lesson engine, prerequisite and credit unlocks, assessments, nine knowledge regression tests, and production build verified** |
-| 7 | Video Learning Studio | **COMPLETE — YouTube/Vimeo playback workspace plus automatic YouTube Data API discovery, lesson-specific search, ranked recommendations, saved video library, study tools, 10 video/discovery regression tests, and production build verified** |
+| 7 | Video Learning Studio | **IMPLEMENTED — awaiting live YouTube API key activation and successful search verification** |
 | 8 | Personal Evolution | **COMPLETE — habit tracking, skill development, identity traits, reflections, shared persistence, mission/planner integration, eight evolution tests, backup regression, and production build verified** |
-| 9 | Rewards & Achievements | Not started |
+| 9 | Rewards & Achievements | **COMPLETE — shared reward economy, nine activity-based achievements, eight XP ranks, seven milestone/credit unlocks, real-life reward redemption lifecycle, backward-compatible persistence, 10 reward/storage regression checks, and production build verified** |
 | 10 | Personal Journal | Not started |
 | 11 | System Reports | Not started |
 | 12 | Settings & Security | Not started |
@@ -216,3 +216,24 @@ The studio finds and ranks existing public YouTube videos; it does not generate 
 
 ### Scope note
 Habit check-ins and self-reported practice are local records. Habit streaks and skill levels are calculated from recorded data; character scores are self-assessments. No AI personality diagnosis, automatic habit detection, wearable/device activity ingestion, or remote coaching service is connected. Full browser and Android device end-to-end testing remains part of Part 13 — Integration & Production.
+
+## Part 9 — Rewards & Achievements
+
+### Delivered
+- Unified progression view showing total XP, current operator level, rank title, progress to the next level, available credits, achievement claims, and fulfilled rewards.
+- Eight rank titles derived from the existing 500-XP level system: Initiate, Apprentice, Pathfinder, Strategist, Specialist, Vanguard, Architect, and Sovereign. Rank unlocks are automatic and cannot be purchased or lost.
+- Nine activity-based achievements covering mission completion, lesson/course completion, habit check-ins and streaks, and completed life goals. Eligibility is calculated from actual shared app records; each XP/credit reward can be claimed only once.
+- Seven special unlocks across Skill Paths, Secret Archives, and Knowledge Trees. Each can be earned through its defined activity milestone or unlocked by the user's deliberate credit spend. Rarity is displayed separately from educational quality.
+- User-created real-life reward store with categories, descriptions, credit costs, available/redeemed/fulfilled states, balance checks, confirmation before spending, and a separate confirmation before marking a reward fulfilled.
+- Reward engine prevents duplicate achievement claims, duplicate unlocks, repeated redemption, insufficient-credit redemption, and invalid fulfilment transitions.
+- Existing mission XP/credit awards and Knowledge/Evolution XP remain connected to the shared progression economy.
+- Achievement claims and special unlock IDs persist through the existing `uls-data-v1` local storage and versioned ARVENA backup/restore. Existing ULS data and old reward records remain compatible; the storage key and prior collections are preserved.
+- Responsive Rewards & Achievements workspace for desktop and mobile.
+
+### Verification evidence
+- Ten new Part 9 regression checks across the reward engine and shared storage cover rank progression, achievement eligibility and one-time claims, reward redemption and fulfilment, reward summaries, milestone/credit unlock paths, unlock catalogue metadata, and persistence/deduplication of claimed/unlocked IDs.
+- Latest GitHub Actions verification on commit `210f988a264332c0c18b9e82ba8cb16699eff168`: `npm ci`, `npm test` (**63 tests passed, 0 failed**), and `npm run build` — all **SUCCESS**.
+- Verified workflow: [ARVENA build verification](https://github.com/amksoul3429-ui/universal-life-system-ULS/actions/runs/45166975121).
+
+### Scope note
+Part 9's reward rules, achievement/unlock integrity, persistence, automated regression suite, and production build are verified. Physical-device interaction and final cross-module end-to-end acceptance remain part of Part 13 — Integration & Production.
