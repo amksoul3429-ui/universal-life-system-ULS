@@ -10,7 +10,7 @@ Only mark a part complete after implementation, automated build verification, an
 | 4 | Daily Planner | **COMPLETE — full planner workflow, eight planner regression tests, and production build verified** |
 | 5 | Dream Life | **COMPLETE — full goal lifecycle, milestone engine, Mission Control integration, seven goal regression tests, and production build verified** |
 | 6 | Universal Knowledge | **COMPLETE — universal course/lesson engine, prerequisite and credit unlocks, assessments, nine knowledge regression tests, and production build verified** |
-| 7 | Video Learning Studio | Not started |
+| 7 | Video Learning Studio | **COMPLETE — YouTube/Vimeo playback workspace, persisted video library, chapters, notes, transcript/narration text, supporting visuals/resources, curriculum links, seven video regression tests, and production build verified** |
 | 8 | Personal Evolution | Not started |
 | 9 | Rewards & Achievements | Not started |
 | 10 | Personal Journal | Not started |
@@ -160,3 +160,26 @@ Part 5's goal and milestone workflows, shared-data integration, and Mission Cont
 
 ### Scope note
 The curriculum engine, authoring tools, lesson tracking, source-reference fields, assessments, progression and credit unlock rules are implemented and verified. Lesson explanations and source references are user-authored in this local-first build; a connected AI tutor, automatic web research/source verification, cloud course catalogue, and external content provider are **not connected** and are not represented as active capabilities. Full browser/device end-to-end testing remains part of Part 13 — Integration & Production.
+
+
+## Part 7 — Video Learning Studio
+
+### Delivered
+- Dedicated Video Learning Studio in the main ARVENA navigation, with a searchable/filterable video library, selected-video workspace, watch-status tracking, and library/watch-time summaries.
+- Secure provider-aware video URL handling for HTTPS YouTube and Vimeo links only. The app validates provider host and video ID before generating an embed URL; YouTube playback uses the privacy-enhanced youtube-nocookie.com embed host, and Vimeo uses its official player host. Unsupported providers, malformed IDs, and insecure HTTP URLs are rejected.
+- Responsive embedded player with an external link to open the original provider page.
+- Full video record management: add, edit, and delete, with subject, level, description, duration, and persistent status (Saved, In Progress, Watched).
+- Study support for chapter markers with timestamp navigation, editable study notes, user-supplied transcript/narration notes, optional supporting visual URL, and external learning-resource links.
+- Optional links from a video to a Universal Knowledge course and lesson, making the media resource discoverable alongside the structured curriculum.
+- Video records are part of the shared Core System data model, local persistence, cross-tab sync, and versioned backup/export/restore. Existing ULS records and the historical storage key remain compatible; older data without a videos collection loads with an empty video library.
+- System Reports include the video lesson count. Video watch status is intentionally separate from Knowledge lesson completion and does not award duplicate XP or credits.
+- Responsive desktop and mobile layouts.
+
+### Verification evidence
+- Seven Video Learning Studio regression tests cover YouTube URL parsing and privacy-enhanced embeds, Vimeo playback URL generation, rejection of unsupported/insecure/malformed URLs, record normalization and resource filtering, watch-status transitions and summary aggregation, timestamp formatting, and safe embed derivation.
+- Combined regression suite: all **41 tests passed** (six Core System, four Missions, eight Daily Planner, seven Dream Life, nine Universal Knowledge, and seven Video Learning Studio tests).
+- GitHub Actions on commit `b1f36ad3d3ccadfa644884ebd344186478c473f5`: dependency installation, `npm test`, and `npm run build` — all **SUCCESS**.
+- Verified workflow: [ARVENA build verification](https://github.com/amksoul3429-ui/universal-life-system-ULS/actions/runs/45152167661).
+
+### Scope note
+The studio plays externally hosted YouTube and Vimeo videos and stores user-authored learning materials. It does not generate original video, AI narration/audio, or automatic transcripts; it does not download or mirror provider videos. YouTube/Vimeo availability, embedding permissions, age/region restrictions, and browser playback behavior remain controlled by those providers. A video marked Watched is a manual progress record, not verified watch telemetry. Full desktop/Android device testing remains part of Part 13 — Integration & Production.
