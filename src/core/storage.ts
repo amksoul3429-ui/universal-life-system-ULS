@@ -18,11 +18,12 @@ export type AppData = {
   videos: CoreRecord[];
   evolution: CoreRecord[];
   achievementClaims: string[];
+  unlockedItems: string[];
   xp: number;
   credits: number;
 };
 export const EMPTY_APP_DATA: AppData = {
-  missions: [], tasks: [], goals: [], knowledge: [], rewards: [], journal: [], videos: [], evolution: [], achievementClaims: [], xp: 0, credits: 0,
+  missions: [], tasks: [], goals: [], knowledge: [], rewards: [], journal: [], videos: [], evolution: [], achievementClaims: [], unlockedItems: [], xp: 0, credits: 0,
 };
 
 export type StorageResult<T> = { ok: true; value: T; warning?: string } | { ok: false; error: string };
@@ -65,6 +66,7 @@ export function validateAppData(value: unknown): AppData {
     videos: collection("videos"),
     evolution: collection("evolution"),
     achievementClaims: Array.isArray(source.achievementClaims) ? [...new Set(source.achievementClaims.filter((x): x is string => typeof x === "string" && x.length <= 100))] : [],
+    unlockedItems: Array.isArray(source.unlockedItems) ? [...new Set(source.unlockedItems.filter((x): x is string => typeof x === "string" && x.length <= 100))] : [],
     xp: safeNumber(source.xp),
     credits: safeNumber(source.credits),
   };
