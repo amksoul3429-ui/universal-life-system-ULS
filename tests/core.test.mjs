@@ -45,6 +45,22 @@ test("legacy flat ULS data migrates in place without changing the storage key", 
   assert.deepEqual(saved.data, validateAppData(sample));
 });
 
+test("legacy ARVENA activity history survives migration and backup restore", () => {
+  const legacy = {
+    ...sample,
+    activity: [{ id: "a1", type: "mission-completed", title: "Mission completed", detail: "Study", created: "2026-11-23T10:00:00.000Z" }],
+  };
+  store.set(STORAGE_KEY, JSON.stringify(legacy));
+  const loaded = loadAppData();
+  assert.equal(loaded.ok, true);
+  if (loaded.ok) {
+    assert.deepEqual(loaded.value.activity, legacy.activity);
+    const restored = parseBackup(createBackup(loaded.value));
+    assert.equal(restored.ok, true);
+    if (restored.ok) assert.deepEqual(restored.value.activity, legacy.activity);
+  }
+});
+
 test("corrupt saved data is not silently overwritten", () => {
   const raw = "{not-json";
   store.set(STORAGE_KEY, raw);
