@@ -42,7 +42,6 @@ function App(){
   });
 };
  const list=(p:Page)=>data[key(p)].filter(x=>x.title.toLowerCase().includes(search.toLowerCase()));
- const tasksToday=data.tasks.filter(x=>x.date===today()),doneToday=tasksToday.filter(x=>x.done).length;
  const navIcon:Record<Page,any>={Overview:LayoutDashboard,Missions:Target,Planner:CalendarDays,'Dream Life':Compass,Evolution:Activity,Knowledge:BookOpen,Rewards:Trophy,Journal:Edit3,Reports:Flame,Settings:Settings};
  return <div className="shell">
  {mobile&&<button className="scrim" onClick={()=>setMobile(false)}/>}<aside className={mobile?'sidebar show':'sidebar'}>
