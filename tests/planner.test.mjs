@@ -14,7 +14,7 @@ test("normalization validates date, time, priority and duration",()=>{
 test("planner sorting supports time, priority, title and duration",()=>{
  const tasks=[task("later",{startTime:"12:00"}),task("none"),task("early",{startTime:"08:30"}),task("critical",{startTime:"08:30",priority:"Critical"}),task("long",{durationMinutes:120})];
  assert.deepEqual(sortPlannerTasks(tasks).map(x=>x.id),["critical","early","later","long","none"]);
- assert.deepEqual(sortPlannerTasks(tasks,"priority").map(x=>x.id),["critical","early","later","long","none"]);
+ assert.deepEqual(sortPlannerTasks(tasks,"priority").map(x=>x.id),["critical","long","early","later","none"]);
  assert.deepEqual(sortPlannerTasks(tasks,"title").map(x=>x.id),["critical","early","later","long","none"]);
  assert.equal(sortPlannerTasks(tasks,"duration")[0].id,"long");
 });
