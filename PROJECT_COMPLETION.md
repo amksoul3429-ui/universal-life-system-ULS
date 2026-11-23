@@ -16,7 +16,7 @@ Only mark a part complete after implementation, automated build verification, an
 | 10 | Personal Journal | **COMPLETE — full journal editor/archive, prompts, metadata, filters, statistics, export, legacy compatibility, eight journal regression tests, and production build verified** |
 | 11 | System Reports | **COMPLETE — report engine, cross-module aggregation, date filters, CSV export, five regression tests, and production build verified** |
 | 12 | Settings & Security | **COMPLETE — dedicated settings/security workspace, backup/restore, permissions, capability disclosure, future-version data protection, three new regression tests, and production build verified** |
-| 13 | Integration & Production | Not started |
+| 13 | Integration & Production | **DEPLOYED — awaiting Android/desktop manual acceptance; NOT COMPLETE** |
 
 ## Part 1 — Command Center
 
@@ -315,3 +315,37 @@ Part 11's report engine, shared-data integration, date filtering, CSV export, re
 
 ### Scope note
 This is local-device protection, not account security or encrypted storage. There is no login, remote sync, server-side recovery, or encryption at rest in this build. Browser notification permission can be managed by the browser, but ARVENA cannot revoke a permission that the browser has granted. Physical browser/Android acceptance remains part of Part 13 — Integration & Production.
+
+
+## Part 13 — Integration & Production
+
+**Current status: integrated production build deployed successfully; awaiting manual acceptance on the user's Android phone and desktop browser. Do not mark complete until those device checks pass.**
+
+### Delivered
+- Integrated the completed Part 1–12 application modules from the Universal Life System development repository into the ARVENA production repository, including Command Center, Missions, Planner, Goals, Knowledge, Video Learning Studio, Personal Evolution, Rewards, Journal, Reports and Settings & Security.
+- Preserved the ARVENA production identity and GitHub Pages base path `/ARVENA/`, the existing PWA manifest, service worker, and PWA registration entry point.
+- Preserved the historical `uls-data-v1` local storage key and backward-compatible data contract so existing browser-local records can be loaded by the integrated build.
+- Updated the production build workflow to run `npm ci`, all automated regression tests, and `npm run build` before uploading and deploying the GitHub Pages artifact.
+- Added release documentation covering workspaces, local development, testing, PWA installation, privacy limits and release acceptance.
+- Confirmed the production artifact includes `index.html`, hashed JS/CSS assets, `manifest.webmanifest`, `sw.js`, and the favicon.
+
+### Automated verification and deployment
+- Production repository: `amksoul3429-ui/ARVENA`, branch `main`.
+- Release commit: `ceb1c2b5dc7d79f9ff8599b4058c44229da5e120`.
+- GitHub Actions run: [ARVENA build, tests and GitHub Pages deployment](https://github.com/amksoul3429-ui/ARVENA/actions/runs/45173715649) — build and deploy jobs **SUCCESS**.
+- Automated regression suite: **79 tests passed, 0 failed**.
+- TypeScript check and Vite production build: **SUCCESS** (1,612 modules transformed).
+- GitHub Pages deployment URL reported by the successful deploy job: https://amksoul3429-ui.github.io/ARVENA/.
+- Deployment artifact contains the production HTML, JS/CSS bundles, PWA manifest and service worker.
+
+### Acceptance still required
+- Open the deployed URL in Chrome on desktop and Android; confirm the Command Center renders and all 11 navigation destinations open without a blank screen or console-breaking error.
+- Create a harmless test mission/task/journal entry, reload the page, and confirm local persistence; then remove the test records.
+- Export a backup and verify that the backup file downloads. Restore only after retaining a safe backup of current records.
+- Install the PWA on Android using Chrome's Install app / Add to Home Screen control; open it in standalone mode.
+- After the first successful online load, test the cached app shell in airplane mode, then reconnect and confirm normal operation.
+- Confirm the installed app receives the deployed update after a subsequent release.
+- Part 7 remains separately pending until the user activates a fresh restricted YouTube Data API key and verifies live search. No API key should be committed to the repository or pasted into chat.
+
+### Scope note
+The source integration, automated tests, production build, artifact upload and GitHub Pages deployment are verified. Real-device UI, storage, backup/restore, installability, offline startup and update acceptance have not been performed by this development environment. ARVENA remains local-first: browser data does not sync across devices, local storage/backups are not encrypted, and remote AI/login/cloud services are not connected. Part 13 is therefore **not yet complete** and must remain unticked until the manual acceptance list passes.
