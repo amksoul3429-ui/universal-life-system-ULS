@@ -237,9 +237,9 @@ export default function KnowledgeLibrary({ courses, credits, onChange, onEconomy
       </div>
 
       {courseOpen && (
-        <div className="backdrop" onMouseDown={e => { if (e.target === e.currentTarget) setCourseEditor(false); }}>
+        <div className="backdrop" onMouseDown={e => { if (e.target === e.currentTarget) setCourseOpen(false); }}>
           <form className="modal" onSubmit={e => { e.preventDefault(); saveCourse(e.currentTarget); }}>
-            <div className="modalhead"><div><small>UNIVERSAL KNOWLEDGE</small><h2>{courseEditor ? "Edit course" : "Create course"}</h2></div><button type="button" onClick={() => setCourseEditor(false)}>×</button></div>
+            <div className="modalhead"><div><small>UNIVERSAL KNOWLEDGE</small><h2>{courseEditor ? "Edit course" : "Create course"}</h2></div><button type="button" onClick={() => setCourseOpen(false)}>×</button></div>
             <label>Course title<input name="title" required maxLength={120} defaultValue={courseEditor?.title || ""} /></label>
             <div className="formgrid">
               <label>Subject<input name="subject" required defaultValue={courseEditor?.subject || ""} placeholder="e.g. Physics, Finance, Programming" /></label>
@@ -249,15 +249,15 @@ export default function KnowledgeLibrary({ courses, credits, onChange, onEconomy
             <label>Learning outcomes (one per line)<textarea name="objectives" defaultValue={courseEditor?.objectives.join("\n") || ""} /></label>
             <label>Prerequisite course<select name="prerequisite" defaultValue={courseEditor?.prerequisiteCourseId || ""}><option value="">No prerequisite (start here)</option>{normalized.filter(c => c.id !== courseEditor?.id).map(c => <option key={c.id} value={c.id}>{c.title}</option>)}</select></label>
             <label>Credit unlock cost<input name="unlockCost" type="number" min="0" max="100000" defaultValue={courseEditor?.unlockCost ?? 0} /></label>
-            <div className="modalactions"><button type="button" className="secondary" onClick={() => setCourseEditor(false)}>CANCEL</button><button className="primary">SAVE COURSE</button></div>
+            <div className="modalactions"><button type="button" className="secondary" onClick={() => setCourseOpen(false)}>CANCEL</button><button className="primary">SAVE COURSE</button></div>
           </form>
         </div>
       )}
 
       {lessonOpen && current && (
-        <div className="backdrop" onMouseDown={e => { if (e.target === e.currentTarget) setLessonEditor(false); }}>
+        <div className="backdrop" onMouseDown={e => { if (e.target === e.currentTarget) setLessonOpen(false); }}>
           <form className="modal" onSubmit={e => { e.preventDefault(); saveLesson(e.currentTarget); }}>
-            <div className="modalhead"><div><small>COURSE / {current.title}</small><h2>{lessonEditor ? "Edit lesson" : "Add lesson"}</h2></div><button type="button" onClick={() => setLessonEditor(false)}>×</button></div>
+            <div className="modalhead"><div><small>COURSE / {current.title}</small><h2>{lessonEditor ? "Edit lesson" : "Add lesson"}</h2></div><button type="button" onClick={() => setLessonOpen(false)}>×</button></div>
             <label>Lesson title<input name="title" required maxLength={120} defaultValue={lessonEditor?.title || ""} /></label>
             <label>Short summary<textarea name="summary" defaultValue={lessonEditor?.summary || ""} /></label>
             <label>Detailed lesson content<textarea name="content" required style={{ minHeight: 150 }} defaultValue={lessonEditor?.content || ""} placeholder="Explain fundamentals, concepts, worked examples, applications and common mistakes." /></label>
@@ -271,7 +271,7 @@ export default function KnowledgeLibrary({ courses, credits, onChange, onEconomy
             <label>Answer options (one per line)<textarea name="options" defaultValue={lessonEditor?.question?.options.join("\n") || ""} placeholder={"Option A\nOption B\nOption C"} /></label>
             <label>Correct option number (starting from 0)<input name="answerIndex" type="number" min="0" defaultValue={lessonEditor?.question?.answerIndex ?? 0} /></label>
             <label>Explanation<textarea name="explanation" defaultValue={lessonEditor?.question?.explanation || ""} /></label>
-            <div className="modalactions"><button type="button" className="secondary" onClick={() => setLessonEditor(false)}>CANCEL</button><button className="primary">SAVE LESSON</button></div>
+            <div className="modalactions"><button type="button" className="secondary" onClick={() => setLessonOpen(false)}>CANCEL</button><button className="primary">SAVE LESSON</button></div>
           </form>
         </div>
       )}
