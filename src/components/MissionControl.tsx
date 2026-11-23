@@ -1,4 +1,4 @@
-import {CalendarDays,Check,ChevronDown,Clock3,Edit3,Play,Plus,RotateCcw,Target,Trash2} from "lucide-react";
+import {CalendarDays,Check,Clock3,Edit3,Play,Plus,RotateCcw,Target,Trash2} from "lucide-react";
 import {normalizeMission,type Mission} from "../core/missions";
 type Props={missions:Mission[];onEdit:(mission:Mission)=>void;onDelete:(mission:Mission)=>void;onActivate:(id:string)=>void;onComplete:(id:string)=>void;onPlanner:(id:string)=>void};
 const dateLabel=(value?:string)=>value?new Date(value+"T00:00:00").toLocaleDateString(undefined,{day:"numeric",month:"short",year:"numeric"}):"No deadline";
