@@ -89,3 +89,21 @@ test("video learning records persist through local storage and versioned backups
     if (restored.ok) assert.deepEqual(restored.value.videos, loaded.value.videos);
   }
 });
+
+test("Personal Evolution records persist in shared storage and backup round-trips", () => {
+  const withEvolution = { ...sample, evolution: [
+    { id: "h1", title: "Read", created: "2026-11-23", kind: "habit", frequency: "Daily", checkIns: ["2026-11-23"] },
+    { id: "s1", title: "Communication", created: "2026-11-23", kind: "skill", level: 2, practiceMinutes: 300 }
+  ] };
+  const saved = saveAppData(withEvolution);
+  assert.equal(saved.ok, true);
+  const loaded = loadAppData();
+  assert.equal(loaded.ok, true);
+  if (loaded.ok) {
+    assert.equal(loaded.value.evolution.length, 2);
+    assert.equal(loaded.value.evolution[0].kind, "habit");
+    const restored = parseBackup(createBackup(loaded.value));
+    assert.equal(restored.ok, true);
+    if (restored.ok) assert.deepEqual(restored.value.evolution, loaded.value.evolution);
+  }
+});
