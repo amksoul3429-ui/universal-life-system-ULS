@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 # TypeScript build information
 *.tsbuildinfo
+
+# Temporary output from dependency-free core tests
+.test-build
