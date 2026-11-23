@@ -15,11 +15,12 @@ export type AppData = {
   knowledge: CoreRecord[];
   rewards: CoreRecord[];
   journal: CoreRecord[];
+  videos: CoreRecord[];
   xp: number;
   credits: number;
 };
 export const EMPTY_APP_DATA: AppData = {
-  missions: [], tasks: [], goals: [], knowledge: [], rewards: [], journal: [], xp: 0, credits: 0,
+  missions: [], tasks: [], goals: [], knowledge: [], rewards: [], journal: [], videos: [], xp: 0, credits: 0,
 };
 
 export type StorageResult<T> = { ok: true; value: T; warning?: string } | { ok: false; error: string };
@@ -48,7 +49,7 @@ function normalizeRecord(value: unknown): CoreRecord | null {
 /** Drops malformed records and normalizes numeric economy fields. */
 export function validateAppData(value: unknown): AppData {
   const source = isObject(value) ? value : {};
-  const collection = (key: keyof Pick<AppData, "missions" | "tasks" | "goals" | "knowledge" | "rewards" | "journal">) =>
+  const collection = (key: keyof Pick<AppData, "missions" | "tasks" | "goals" | "knowledge" | "rewards" | "journal" | "videos">) =>
     Array.isArray(source[key])
       ? (source[key] as unknown[]).map(normalizeRecord).filter((item): item is CoreRecord => item !== null)
       : [];
@@ -59,6 +60,7 @@ export function validateAppData(value: unknown): AppData {
     knowledge: collection("knowledge"),
     rewards: collection("rewards"),
     journal: collection("journal"),
+    videos: collection("videos"),
     xp: safeNumber(source.xp),
     credits: safeNumber(source.credits),
   };
@@ -136,7 +138,7 @@ export function parseBackup(value: unknown): StorageResult<AppData> {
     return { ok: true, value: validateAppData(value.data) };
   }
   // Accept legacy ULS flat backups, but reject unrelated JSON files.
-  const looksLikeLegacy = ["missions", "tasks", "goals", "knowledge", "rewards", "journal"].some(key => Array.isArray(value[key]));
+  const looksLikeLegacy = ["missions", "tasks", "goals", "knowledge", "rewards", "journal", "videos"].some(key => Array.isArray(value[key]));
   return looksLikeLegacy
     ? { ok: true, value: validateAppData(value), warning: "Legacy backup imported and upgraded to the ARVENA format." }
     : { ok: false, error: "The JSON file does not contain recognizable ARVENA/ULS data." };
