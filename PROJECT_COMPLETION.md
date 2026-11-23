@@ -14,8 +14,8 @@ Only mark a part complete after implementation, automated build verification, an
 | 8 | Personal Evolution | **COMPLETE — habit tracking, skill development, identity traits, reflections, shared persistence, mission/planner integration, eight evolution tests, backup regression, and production build verified** |
 | 9 | Rewards & Achievements | **COMPLETE — shared reward economy, nine activity-based achievements, eight XP ranks, seven milestone/credit unlocks, real-life reward redemption lifecycle, backward-compatible persistence, 10 reward/storage regression checks, and production build verified** |
 | 10 | Personal Journal | **COMPLETE — full journal editor/archive, prompts, metadata, filters, statistics, export, legacy compatibility, eight journal regression tests, and production build verified** |
-| 11 | System Reports | Not started |
-| 12 | Settings & Security | Not started |
+| 11 | System Reports | **COMPLETE — report engine, cross-module aggregation, date filters, CSV export, five regression tests, and production build verified** |
+| 12 | Settings & Security | **IMPLEMENTED — awaiting automated tests and production build verification** |
 | 13 | Integration & Production | Not started |
 
 ## Part 1 — Command Center
@@ -288,3 +288,28 @@ Part 10's implementation, legacy compatibility, automated regression coverage, a
 
 ### Scope note
 Part 11's report engine, shared-data integration, date filtering, CSV export, regression coverage, and production build are verified. Metrics are calculated from locally recorded events; if a legacy record lacks a completion timestamp or usable date, it may not be assignable to a historical date range. No remote analytics, AI interpretation of private journal text, or automatic external data collection is connected. Full browser/Android end-to-end testing remains part of Part 13 — Integration & Production.
+
+
+## Part 12 — Settings & Security
+
+**Current status: implementation committed; automated verification is pending. Do not count this milestone complete until GitHub Actions passes.**
+
+### Delivered
+- Dedicated Settings & Security workspace integrated into the existing Settings navigation.
+- Local-data integrity panel identifies the device-local storage location, preserved `uls-data-v1` key, record count, and local-only data behavior.
+- Versioned JSON backup export and guarded restore flow, with file-read errors and explicit confirmation before replacing current records.
+- Existing legacy ULS backup compatibility retained; YouTube API key remains excluded from exported ARVENA backups.
+- Stronger forward-version protection: routine application saves cannot overwrite a stored ARVENA envelope created by a newer schema version.
+- Explicit reset operation is separate from ordinary saves and is only invoked after the user confirms permanent deletion.
+- Backup parsing rejects unrelated current-format JSON objects that do not contain recognizable ARVENA data.
+- Browser notification permission is requested only through the user's explicit control; denied permissions are directed to browser site settings rather than bypassed.
+- Capability status is displayed from the central registry: local storage, cross-tab sync, versioned backups and optional notifications are available; cloud sync, remote AI, encrypted storage and external actions are honestly marked not connected.
+- Privacy disclosure explains that records remain in browser storage, can be lost if browser data is cleared or the browser is uninstalled, and are not sent to a remote AI service by this build.
+- Existing app collections, progression values, legacy data and the historical storage key are preserved; no account, cloud service, encryption or external integration is falsely represented as active.
+
+### Verification
+- New Core System regression checks cover future-version overwrite protection, explicit reset of a protected future-version envelope, and rejection of unrelated backup data.
+- Awaiting GitHub Actions `npm ci`, full automated test suite, and `npm run build`.
+
+### Scope note
+This is local-device protection, not account security or encrypted storage. There is no login, remote sync, server-side recovery, or encryption at rest in this build. Browser notification permission can be managed by the browser, but ARVENA cannot revoke a permission that the browser has granted. Physical browser/Android acceptance remains part of Part 13 — Integration & Production.
