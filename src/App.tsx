@@ -17,9 +17,9 @@ import './components/MissionControl.css';
 import {getLevel,xpIntoLevel} from './core/system';
 import {claimAchievement,redeemPersonalReward,fulfillPersonalReward,unlockSystemItem} from './core/rewards';
 import {habitStreak} from './core/evolution';
-import {loadAppData,saveAppData,createBackup,parseBackup,subscribeToExternalChanges,clearStoredAppData} from './core/storage';
+import {loadAppData,saveAppData,subscribeToExternalChanges,clearStoredAppData} from './core/storage';
 import {getNotificationAccess,requestNotificationAccess,sendSystemNotification} from './core/permissions';
-import {Activity,BookOpen,CalendarDays,Check,ChevronRight,Compass,Download,Edit3,Flame,LayoutDashboard,Menu,Plus,Settings,Sparkles,Target,Trophy,Upload,Wallet,Video as VideoIcon,X,Zap} from 'lucide-react';
+import {Activity,BookOpen,CalendarDays,Check,ChevronRight,Compass,Edit3,Flame,LayoutDashboard,Menu,Plus,Settings,Sparkles,Target,Trophy,Wallet,Video as VideoIcon,X,Zap} from 'lucide-react';
 type Page='Overview'|'Missions'|'Planner'|'Dream Life'|'Evolution'|'Knowledge'|'Videos'|'Rewards'|'Journal'|'Reports'|'Settings';
 type Item={id:string;title:string;created:string;[key:string]:any};
 type Data={missions:Item[];tasks:Item[];goals:Item[];knowledge:Item[];videos:Item[];evolution:Item[];rewards:Item[];journal:Item[];achievementClaims:string[];unlockedItems:string[];xp:number;credits:number};
@@ -98,7 +98,6 @@ function App(){
  <div className="search"><input placeholder="Filter current section..." value={search} onChange={e=>setSearch(e.target.value)}/>{search&&<button onClick={()=>setSearch('')}><X size={13}/></button>}</div>
  </div>
 }
-function Panel({title,children}:{title:string;children:any}){return <section className="panel"><h4>{title}</h4>{children}</section>}
 function Head({page,onAdd}:{page:Page;onAdd?:()=>void}){return <div className="head"><div><small>UNIVERSAL LIFE SYSTEM / {page.toUpperCase()}</small><h1>{labels[page]}</h1><p>Plan deliberately. Execute consistently. Review honestly.</p></div>{onAdd&&<button className="primary" onClick={onAdd}><Plus size={15}/> ADD NEW</button>}</div>}
 function Modal({page,initial,defaultDate,close,save}:{page:Page;initial:Item|null;defaultDate:string;close:()=>void;save:(f:HTMLFormElement)=>void}){
  const title=labels[page]||page;
