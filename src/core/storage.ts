@@ -15,6 +15,7 @@ export type AppData = {
   knowledge: CoreRecord[];
   rewards: CoreRecord[];
   journal: CoreRecord[];
+  activity: CoreRecord[];
   videos: CoreRecord[];
   evolution: CoreRecord[];
   achievementClaims: string[];
@@ -23,7 +24,7 @@ export type AppData = {
   credits: number;
 };
 export const EMPTY_APP_DATA: AppData = {
-  missions: [], tasks: [], goals: [], knowledge: [], rewards: [], journal: [], videos: [], evolution: [], achievementClaims: [], unlockedItems: [], xp: 0, credits: 0,
+  missions: [], tasks: [], goals: [], knowledge: [], rewards: [], journal: [], activity: [], videos: [], evolution: [], achievementClaims: [], unlockedItems: [], xp: 0, credits: 0,
 };
 
 export type StorageResult<T> = { ok: true; value: T; warning?: string } | { ok: false; error: string };
@@ -52,7 +53,7 @@ function normalizeRecord(value: unknown): CoreRecord | null {
 /** Drops malformed records and normalizes numeric economy fields. */
 export function validateAppData(value: unknown): AppData {
   const source = isObject(value) ? value : {};
-  const collection = (key: keyof Pick<AppData, "missions" | "tasks" | "goals" | "knowledge" | "rewards" | "journal" | "videos" | "evolution">) =>
+  const collection = (key: keyof Pick<AppData, "missions" | "tasks" | "goals" | "knowledge" | "rewards" | "journal" | "activity" | "videos" | "evolution">) =>
     Array.isArray(source[key])
       ? (source[key] as unknown[]).map(normalizeRecord).filter((item): item is CoreRecord => item !== null)
       : [];
@@ -63,6 +64,7 @@ export function validateAppData(value: unknown): AppData {
     knowledge: collection("knowledge"),
     rewards: collection("rewards"),
     journal: collection("journal"),
+    activity: collection("activity"),
     videos: collection("videos"),
     evolution: collection("evolution"),
     achievementClaims: Array.isArray(source.achievementClaims) ? [...new Set(source.achievementClaims.filter((x): x is string => typeof x === "string" && x.length <= 100))] : [],
@@ -156,7 +158,7 @@ export function parseBackup(value: unknown): StorageResult<AppData> {
     }
     const backupData = value.data;
     if (!isObject(backupData)) return { ok: false, error: "This backup does not contain a valid data object." };
-    const knownCollections = ["missions", "tasks", "goals", "knowledge", "rewards", "journal", "videos", "evolution", "achievementClaims", "unlockedItems"];
+    const knownCollections = ["missions", "tasks", "goals", "knowledge", "rewards", "journal", "activity", "videos", "evolution", "achievementClaims", "unlockedItems"];
     const recognizable = knownCollections.some(key => Array.isArray(backupData[key])) ||
       typeof backupData.xp === "number" || typeof backupData.credits === "number";
     if (!recognizable) return { ok: false, error: "The backup does not contain recognizable ARVENA data." };
