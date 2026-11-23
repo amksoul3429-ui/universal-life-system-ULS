@@ -140,7 +140,7 @@ export function parseBackup(value: unknown): StorageResult<AppData> {
     return { ok: true, value: validateAppData(value.data) };
   }
   // Accept legacy ULS flat backups, but reject unrelated JSON files.
-  const looksLikeLegacy = ["missions", "tasks", "goals", "knowledge", "rewards", "journal", "videos", "evolution"].some(key => Array.isArray(value[key]));
+  const looksLikeLegacy = ["missions", "tasks", "goals", "knowledge", "rewards", "journal", "videos", "evolution", "achievementClaims"].some(key => Array.isArray(value[key]));
   return looksLikeLegacy
     ? { ok: true, value: validateAppData(value), warning: "Legacy backup imported and upgraded to the ARVENA format." }
     : { ok: false, error: "The JSON file does not contain recognizable ARVENA/ULS data." };
