@@ -9,7 +9,7 @@ Only mark a part complete after implementation, automated build verification, an
 | 3 | Missions | **COMPLETE — full mission workflow, planner integration, four mission regression tests, and production build verified** |
 | 4 | Daily Planner | **COMPLETE — full planner workflow, eight planner regression tests, and production build verified** |
 | 5 | Dream Life | **COMPLETE — full goal lifecycle, milestone engine, Mission Control integration, seven goal regression tests, and production build verified** |
-| 6 | Universal Knowledge | Not started |
+| 6 | Universal Knowledge | **COMPLETE — universal course/lesson engine, prerequisite and credit unlocks, assessments, nine knowledge regression tests, and production build verified** |
 | 7 | Video Learning Studio | Not started |
 | 8 | Personal Evolution | Not started |
 | 9 | Rewards & Achievements | Not started |
@@ -134,3 +134,29 @@ The Daily Planner's agreed task, scheduling, priority, calendar, and execution w
 
 ### Scope note
 Part 5's goal and milestone workflows, shared-data integration, and Mission Control handoff are implemented and verified by automated regression tests and a production build. Full browser/device end-to-end testing remains part of Part 13 — Integration & Production.
+
+
+## Part 6 — Universal Knowledge
+
+### Delivered
+- Replaced the former flat learning-item list with a structured Universal Knowledge curriculum that can organize any subject into courses and lessons, from beginner foundations through advanced and expert levels.
+- Complete course management: create, edit, and delete courses; assign subject and learning level; describe course purpose; define learning outcomes; set prerequisite courses; and configure credit unlock costs.
+- Complete lesson management: create, edit, and delete lessons with summaries, detailed teaching content, learning objectives, estimated study time, reference/source name and URL, and optional multiple-choice knowledge checks with explanations.
+- Course workspace shows curriculum navigation, lesson completion, course mastery percentage, total lessons, and completed study-time summaries.
+- Assessment gate: a lesson with a knowledge check cannot be marked complete until the correct answer is selected; feedback explains the result.
+- Learning progression supports both automatic prerequisite/milestone unlocks when the prior course is mastered and user-chosen early unlocks by spending earned credits. Zero-cost locked courses cannot bypass an incomplete prerequisite.
+- Exactly-once learning XP: 10 XP for a completed lesson and a one-time 50 XP course mastery bonus. Re-completing an already completed lesson cannot award duplicate XP.
+- Completing a prerequisite course automatically unlocks dependent courses. Courses added after a prerequisite has already been completed are also unlocked automatically.
+- Legacy ULS learning records remain readable and retain their subject, title, and completion state by being normalized into a compatible one-lesson course record.
+- Knowledge courses and nested lessons persist through the shared Core System and remain included in the existing versioned backup/export format.
+- Existing Command Center, Personal Evolution, and System Reports continue to use the shared learning collection and XP progression economy.
+- Responsive Knowledge Library interface with mobile and desktop layouts.
+
+### Verification evidence
+- Nine Universal Knowledge regression tests cover legacy migration, progress/time aggregation, credit balance and deduction, prerequisite enforcement, automatic milestone unlock, exactly-once lesson/course XP, dependent-course unlock, assessment evaluation, and summary reporting.
+- Combined regression suite: all **34 tests passed** (six Core System, four Missions, eight Daily Planner, seven Dream Life, and nine Universal Knowledge tests).
+- GitHub Actions on commit `cf081360dd9b3962d1e491440ede08ff7a987489`: dependency installation, `npm test`, and `npm run build` — all **SUCCESS**.
+- Verified workflow: [ARVENA build verification](https://github.com/amksoul3429-ui/universal-life-system-ULS/actions/runs/45150079234).
+
+### Scope note
+The curriculum engine, authoring tools, lesson tracking, source-reference fields, assessments, progression and credit unlock rules are implemented and verified. Lesson explanations and source references are user-authored in this local-first build; a connected AI tutor, automatic web research/source verification, cloud course catalogue, and external content provider are **not connected** and are not represented as active capabilities. Full browser/device end-to-end testing remains part of Part 13 — Integration & Production.
