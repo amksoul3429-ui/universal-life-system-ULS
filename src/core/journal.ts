@@ -15,7 +15,7 @@ export function normalizeJournalEntry(value:unknown):JournalEntry|null{
  const id=x.id as string;
  const title=x.title as string;
  const created=typeof x.created==="string"?x.created:new Date().toISOString();
- const date=validDate(x.date)?x.date:(created.slice(0,10)||new Date().toISOString().slice(0,10));
+ const date=validDate(x.date)?String(x.date):(created.slice(0,10)||new Date().toISOString().slice(0,10));
  const mood=moods.includes(x.mood as JournalMood)?x.mood as JournalMood:"Neutral";
  const category=categories.includes(x.category as JournalCategory)?x.category as JournalCategory:"Personal";
  const tags=Array.isArray(x.tags)?[...new Set(x.tags.filter((t):t is string=>typeof t==="string").map(t=>t.trim().slice(0,30)).filter(Boolean))].slice(0,12):[];
