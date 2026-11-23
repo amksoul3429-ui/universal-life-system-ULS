@@ -6,12 +6,12 @@ export type PlannerTask = {
 };
 export type PlannerPriority = "Low" | "Medium" | "High" | "Critical";
 const PRIORITY_ORDER: Record<string, number> = { Critical: 0, High: 1, Medium: 2, Low: 3 };
-const validTime = (value: unknown): string => typeof value === "string" && /^([01]\\d|2[0-3]):[0-5]\\d$/.test(value) ? value : "";
+const validTime = (value: unknown): string => typeof value === "string" && /^([01]\d|2[0-3]):[0-5]\d$/.test(value) ? value : "";
 export function normalizePlannerTask<T extends PlannerTask>(task: T): T {
   const duration = Number(task.durationMinutes);
   return {
     ...task,
-    date: typeof task.date === "string" && /^\\d{4}-\\d{2}-\\d{2}$/.test(task.date) ? task.date : "",
+    date: typeof task.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(task.date) ? task.date : "",
     category: typeof task.category === "string" && task.category ? task.category : "Personal",
     priority: task.priority && PRIORITY_ORDER[task.priority] !== undefined ? task.priority : "Medium",
     done: task.done === true,
