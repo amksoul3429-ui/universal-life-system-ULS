@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { BACKUP_FORMAT, BACKUP_VERSION, STORAGE_KEY, createBackup, loadAppData, parseBackup, saveAppData, validateAppData } from "../.test-build/storage.js";
+import { BACKUP_FORMAT, BACKUP_VERSION, STORAGE_KEY, clearStoredAppData, createBackup, loadAppData, parseBackup, saveAppData, validateAppData } from "../.test-build/storage.js";
 
 const store = new Map();
 globalThis.window = {
@@ -118,4 +118,24 @@ test("achievement claims persist and duplicate claim IDs are normalized", () => 
   assert.equal(loaded.ok, true);
   if (loaded.ok) assert.deepEqual(loaded.value.achievementClaims, ["mission-first", "course-first"]);
   if (loaded.ok) assert.deepEqual(loaded.value.unlockedItems, ["skill-study"]);
+});
+
+test("saving cannot overwrite a newer versioned local data envelope", () => {
+  const raw = JSON.stringify({ format: BACKUP_FORMAT, version: 99, data: sample });
+  store.set(STORAGE_KEY, raw);
+  const saved = saveAppData({ ...sample, xp: 999 });
+  assert.equal(saved.ok, false);
+  assert.equal(store.get(STORAGE_KEY), raw);
+});
+
+test("explicit local reset clears a protected future-version envelope", () => {
+  store.set(STORAGE_KEY, JSON.stringify({ format: BACKUP_FORMAT, version: 99, data: sample }));
+  const cleared = clearStoredAppData();
+  assert.equal(cleared.ok, true);
+  assert.equal(store.has(STORAGE_KEY), false);
+});
+
+test("current-version backup rejects unrelated empty data objects", () => {
+  const parsed = parseBackup({ format: BACKUP_FORMAT, version: BACKUP_VERSION, data: { unrelated: true } });
+  assert.equal(parsed.ok, false);
 });
