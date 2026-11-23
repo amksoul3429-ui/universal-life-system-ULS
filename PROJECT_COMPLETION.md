@@ -173,16 +173,20 @@ The curriculum engine, authoring tools, lesson tracking, source-reference fields
 - Optional links from a video to a Universal Knowledge course and lesson, making the media resource discoverable alongside the structured curriculum.
 - Video records are part of the shared Core System data model, local persistence, cross-tab sync, and versioned backup/export/restore. Existing ULS records and the historical storage key remain compatible; older data without a videos collection loads with an empty video library.
 - System Reports include the video lesson count. Video watch status is intentionally separate from Knowledge lesson completion and does not award duplicate XP or credits.
+- Automatic YouTube educational-video discovery through the official YouTube Data API v3. ARVENA searches public YouTube videos from inside the studio, requests duration and public engagement metadata, and ranks results using transparent topic relevance, view/engagement, channel reach, lecture-duration, and freshness signals.
+- Lesson-specific discovery: select a lesson from Universal Knowledge to prefill the topic. Saving a recommendation adds it to the video library and preserves its course/lesson relationship.
+- One-time API-key setup inside the studio. The key is stored only in this browser's local storage and excluded from ARVENA backups. The interface explains Google Cloud API and website-referrer restrictions. The official YouTube API key is required for live search.
 - Responsive desktop and mobile layouts.
 
 ### Verification evidence
-- Seven Video Learning Studio regression tests cover YouTube URL parsing and privacy-enhanced embeds, Vimeo playback URL generation, rejection of unsupported/insecure/malformed URLs, record normalization and resource filtering, watch-status transitions and summary aggregation, timestamp formatting, safe embed derivation, and video-library persistence/backup round-trip.
-- Combined regression suite: all **42 tests passed** (six Core System, four Missions, eight Daily Planner, seven Dream Life, nine Universal Knowledge, and seven Video Learning Studio tests).
-- GitHub Actions on commit `9678f0bef5f17689ad62d3d2a1453cc527d986f7`: dependency installation, `npm test`, and `npm run build` — all **SUCCESS**.
-- Verified workflow: [ARVENA build verification](https://github.com/amksoul3429-ui/universal-life-system-ULS/actions/runs/45152167661).
+- Seven original Video Learning Studio regression tests cover provider URL validation, embeds, normalization, watch status, summaries, timestamps, and persistence.
+- Three new YouTube-discovery tests cover ISO-8601 duration parsing, recommendation ranking, and missing-key/empty-topic validation.
+- Combined automated regression suite: **54 tests passed**.
+- GitHub Actions on commit `9dd2671dd136f34f4a194dd381a0736c596126af`: dependency installation, `npm test`, and `npm run build` — all **SUCCESS**.
+- Verified workflow: [ARVENA build verification](https://github.com/amksoul3429-ui/universal-life-system-ULS/actions/runs/45154581435).
 
 ### Scope note
-The studio plays externally hosted YouTube and Vimeo videos and stores user-authored learning materials. It does not generate original video, AI narration/audio, or automatic transcripts; it does not download or mirror provider videos. YouTube/Vimeo availability, embedding permissions, age/region restrictions, and browser playback behavior remain controlled by those providers. A video marked Watched is a manual progress record, not verified watch telemetry. Full desktop/Android device testing remains part of Part 13 — Integration & Production.
+The studio finds and ranks existing public YouTube videos; it does not generate videos, narration, or transcripts, and does not download or mirror provider videos. A YouTube Data API key must be configured once before live discovery is activated; no key has been supplied in this development session, so live API account/quota/referrer behaviour still requires activation testing. Ranking is a heuristic based on public metadata, not an AI assessment or guarantee of teaching accuracy or completeness. Provider availability, embedding permissions, age/region restrictions, and browser playback remain controlled by YouTube/Vimeo. A video marked Watched is a manual progress record, not verified watch telemetry. Full desktop/Android device testing remains part of Part 13 — Integration & Production.
 
 
 ## Part 8 — Personal Evolution
