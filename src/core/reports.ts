@@ -40,7 +40,7 @@ export function summarizeReports(data:ReportData,range:ReportRange={}){
  for(const x of [...missionDone,...taskDone,...goalDone,...lessonDone,...journalFiltered]){const d=completionDate(x);if(inRange(d,range))dates.add(d);}
  for(const c of checkins){const d=dateOnly(c.date||c.day||c.created);if(inRange(d,range))dates.add(d);}
  const daysActive=dates.size;
- const totalTasks=missions.length+tasks.length;
+ const totalTasks=filtered(missions).length+filtered(tasks).length;
  const completionRate=totalTasks?Math.round((count(missionDone)+count(taskDone))/totalTasks*100):0;
  const trendDates:string[]=[];
  if(range.start&&range.end){
