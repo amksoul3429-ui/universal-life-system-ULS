@@ -5,3 +5,5 @@
 .dp-conflicts{border-color:#8b713d;background:#393321;color:#f0d58d}.dp-conflicts span{color:#d6c69c}
 @media(max-width:700px){.dp-month-weekdays,.dp-month-grid{gap:3px}.dp-month-grid button{min-height:55px;padding:5px}.dp-month-grid small{font-size:6px}.dp-month-grid i{font-size:6px}.dp-filter-row{display:grid;grid-template-columns:1fr 1fr}.dp-filter-row select{min-width:0;width:100%}.dp-filter-row .dp-show-completed{margin-left:0}.dp-overdue{align-items:flex-start;flex-wrap:wrap}.dp-overdue button{margin-left:28px}.dp-view-switch{justify-content:flex-start}}
 @media(max-width:380px){.dp-month-grid button{min-height:47px;padding:4px}.dp-month-grid strong{font-size:11px}.dp-month-grid small{font-size:5px}}
+
+.dp-planner-tools{display:grid;gap:13px}
