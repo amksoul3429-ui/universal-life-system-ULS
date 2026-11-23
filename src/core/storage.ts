@@ -154,11 +154,13 @@ export function parseBackup(value: unknown): StorageResult<AppData> {
     if (value.version !== BACKUP_VERSION || !isObject(value.data)) {
       return { ok: false, error: "This backup version is not supported by this ARVENA build." };
     }
+    const backupData = value.data;
+    if (!isObject(backupData)) return { ok: false, error: "This backup does not contain a valid data object." };
     const knownCollections = ["missions", "tasks", "goals", "knowledge", "rewards", "journal", "videos", "evolution", "achievementClaims", "unlockedItems"];
-    const recognizable = knownCollections.some(key => Array.isArray(value.data[key])) ||
-      typeof value.data.xp === "number" || typeof value.data.credits === "number";
+    const recognizable = knownCollections.some(key => Array.isArray(backupData[key])) ||
+      typeof backupData.xp === "number" || typeof backupData.credits === "number";
     if (!recognizable) return { ok: false, error: "The backup does not contain recognizable ARVENA data." };
-    return { ok: true, value: validateAppData(value.data) };
+    return { ok: true, value: validateAppData(backupData) };
   }
   // Accept legacy ULS flat backups, but reject unrelated JSON files.
   const looksLikeLegacy = ["missions", "tasks", "goals", "knowledge", "rewards", "journal", "videos", "evolution", "achievementClaims", "unlockedItems"].some(key => Array.isArray(value[key]));
