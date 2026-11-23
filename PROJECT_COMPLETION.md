@@ -164,6 +164,8 @@ The curriculum engine, authoring tools, lesson tracking, source-reference fields
 
 ## Part 7 — Video Learning Studio
 
+**Current status: implementation and CI verification complete; live YouTube API activation remains pending the user's API key. This milestone is not counted complete until live search is verified.**
+
 ### Delivered
 - Dedicated Video Learning Studio in the main ARVENA navigation, with a searchable/filterable video library, selected-video workspace, watch-status tracking, and library/watch-time summaries.
 - Secure provider-aware video URL handling for HTTPS YouTube and Vimeo links only. The app validates provider host and video ID before generating an embed URL; YouTube playback uses the privacy-enhanced youtube-nocookie.com embed host, and Vimeo uses its official player host. Unsupported providers, malformed IDs, and insecure HTTP URLs are rejected.
