@@ -99,8 +99,11 @@ export function saveAppData(value: unknown): StorageResult<AppData> {
     const existingRaw = window.localStorage.getItem(STORAGE_KEY);
     if (existingRaw) {
       try {
-        const existing = parseStoredValue(existingRaw);
-        if (JSON.stringify(existing) === JSON.stringify(data)) return { ok: true, value: data };
+        const parsedExisting: unknown = JSON.parse(existingRaw);
+        if (isObject(parsedExisting) && parsedExisting.format === BACKUP_FORMAT && parsedExisting.version === BACKUP_VERSION) {
+          const existing = parseStoredValue(existingRaw);
+          if (JSON.stringify(existing) === JSON.stringify(data)) return { ok: true, value: data };
+        }
       } catch { /* Replace malformed storage only after an explicit valid save. */ }
     }
     const envelope: BackupEnvelope = {
