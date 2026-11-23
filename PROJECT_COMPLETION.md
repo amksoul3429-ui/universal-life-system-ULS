@@ -231,7 +231,7 @@ Habit check-ins and self-reported practice are local records. Habit streaks and 
 - Responsive Rewards & Achievements workspace for desktop and mobile.
 
 ### Verification evidence
-- Ten new Part 9 regression checks across the reward engine and shared storage cover rank progression, achievement eligibility and one-time claims, reward redemption and fulfilment, reward summaries, milestone/credit unlock paths, unlock catalogue metadata, and persistence/deduplication of claimed/unlocked IDs.
+- Nine new Part 9 regression checks across the reward engine and shared storage cover rank progression, achievement eligibility and one-time claims, reward redemption and fulfilment, reward summaries, milestone/credit unlock paths, unlock catalogue metadata, and persistence/deduplication of claimed/unlocked IDs.
 - Latest GitHub Actions verification on commit `210f988a264332c0c18b9e82ba8cb16699eff168`: `npm ci`, `npm test` (**63 tests passed, 0 failed**), and `npm run build` — all **SUCCESS**.
 - Verified workflow: [ARVENA build verification](https://github.com/amksoul3429-ui/universal-life-system-ULS/actions/runs/45166975121).
 
