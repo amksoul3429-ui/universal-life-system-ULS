@@ -59,7 +59,7 @@ export function unlockKnowledgeCourse(values: unknown[], courseId: string, credi
   const target = courses.find(c => c.id === courseId);
   if (!target) return { changed: false, courses, credits, reason: "Course not found" };
   if (target.unlocked) return { changed: false, courses, credits, reason: "Course is already unlocked" };
-  if (mode === "spend" && credits < target.unlockCost) return { changed: false, courses, credits, reason: "Not enough credits to unlock this course" };
+  if (mode === "spend" && target.prerequisiteCourseId && target.unlockCost === 0 && !courses.some(c => c.id === target.prerequisiteCourseId && c.done)) return { changed: false, courses, credits, reason: "Complete the prerequisite or assign a positive credit unlock cost" };\n  if (mode === "spend" && credits < target.unlockCost) return { changed: false, courses, credits, reason: "Not enough credits to unlock this course" };
   if (mode === "milestone" && target.prerequisiteCourseId && !courses.some(c => c.id === target.prerequisiteCourseId && c.done)) {
     return { changed: false, courses, credits, reason: "Complete the prerequisite course first" };
   }
