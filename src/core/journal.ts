@@ -17,7 +17,7 @@ export function normalizeJournalEntry(value:unknown):JournalEntry|null{
  const mood=moods.includes(x.mood as JournalMood)?x.mood as JournalMood:"Neutral";
  const category=categories.includes(x.category as JournalCategory)?x.category as JournalCategory:"Personal";
  const tags=Array.isArray(x.tags)?[...new Set(x.tags.filter((t):t is string=>typeof t==="string").map(t=>t.trim().slice(0,30)).filter(Boolean))].slice(0,12):[];
- return {id:x.id,title:x.title.trim()||"Untitled entry",created,date,updatedAt:typeof x.updatedAt==="string"?x.updatedAt:created,content:typeof x.content==="string"?x.content:"",mood,category,tags,favorite:x.favorite===true,prompt:typeof x.prompt==="string"?x.prompt:""};
+ return {id,title:title.trim()||"Untitled entry",created,date,updatedAt:typeof x.updatedAt==="string"?x.updatedAt:created,content:typeof x.content==="string"?x.content:"",mood,category,tags,favorite:x.favorite===true,prompt:typeof x.prompt==="string"?x.prompt:""};
 }
 export function filterJournalEntries(entries:JournalEntry[],filters:JournalFilters={}):JournalEntry[]{
  const q=(filters.query||"").trim().toLocaleLowerCase();
