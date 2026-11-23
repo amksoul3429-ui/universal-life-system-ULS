@@ -107,3 +107,13 @@ test("Personal Evolution records persist in shared storage and backup round-trip
     if (restored.ok) assert.deepEqual(restored.value.evolution, loaded.value.evolution);
   }
 });
+
+test("achievement claims persist and duplicate claim IDs are normalized", () => {
+  const data = validateAppData({ ...sample, achievementClaims: ["mission-first", "mission-first", 4, "course-first"] });
+  assert.deepEqual(data.achievementClaims, ["mission-first", "course-first"]);
+  const saved = saveAppData({ ...sample, achievementClaims: data.achievementClaims });
+  assert.equal(saved.ok, true);
+  const loaded = loadAppData();
+  assert.equal(loaded.ok, true);
+  if (loaded.ok) assert.deepEqual(loaded.value.achievementClaims, ["mission-first", "course-first"]);
+});
