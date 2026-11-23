@@ -1,5 +1,8 @@
 import {useEffect,useState} from 'react';
 import CommandCenter from './components/CommandCenter';
+import MissionControl from './components/MissionControl';
+import {normalizeMission,transitionMission,assignMissionToPlanner,missionReward} from './core/missions';
+import './components/MissionControl.css';
 import {getLevel,xpIntoLevel,completeMissionReward,redeemReward} from './core/system';
 import {loadAppData,saveAppData,createBackup,parseBackup,subscribeToExternalChanges} from './core/storage';
 import {getNotificationAccess,requestNotificationAccess,sendSystemNotification,SYSTEM_CAPABILITIES} from './core/permissions';
@@ -25,21 +28,22 @@ function App(){
  const remove=(p:Page,item:Item)=>{setData(d=>({...d,[key(p)]:d[key(p)].filter(x=>x.id!==item.id)}));setToast('Deleted')};
  const save=(p:Page,form:HTMLFormElement)=>{const f=new FormData(form),v=(k:string)=>String(f.get(k)||''),old=editing;const base={id:old?.id||id(),title:v('title'),created:old?.created||new Date().toISOString()};
  let item:Item=base;
- if(p==='Missions')item={...base,description:v('description'),category:v('category'),difficulty:v('difficulty'),xp:+v('xp'),deadline:v('deadline'),done:old?.done||false};
- if(p==='Planner')item={...base,date:v('date'),category:v('category'),priority:v('priority'),done:old?.done||false};
+ if(p==='Missions')item={...base,description:v('description'),category:v('category'),difficulty:v('difficulty'),priority:v('priority'),xp:+v('xp'),deadline:v('deadline'),status:old?.status||'Available',done:old?.done||false,completedAt:old?.completedAt};
+ if(p==='Planner')item={...base,date:v('date'),category:v('category'),priority:v('priority'),done:old?.done||false,missionId:old?.missionId};
  if(p==='Dream Life')item={...base,description:v('description'),area:v('area'),target:v('target'),progress:+v('progress')};
  if(p==='Knowledge')item={...base,subject:v('subject'),level:v('level'),done:old?.done||false};
  if(p==='Rewards')item={...base,description:v('description'),type:v('type'),cost:+v('cost'),redeemed:old?.redeemed||false};
  if(p==='Journal')item={...base,content:v('content'),mood:v('mood')};
  setData(d=>({...d,[key(p)]:old?d[key(p)].map(x=>x.id===old.id?item:x):[item,...d[key(p)]]}));setModal(null);setEditing(null);setToast(old?'Saved changes':'Added successfully')};
- const completeMission=(m:Item)=>{
-  setData(d=>{
-    const result=completeMissionReward(d.missions,d.xp,d.credits,m.id);
-    if(!result.awarded)return d;
-    setToast('Mission complete · XP and credits awarded');
-    return {...d,missions:result.missions,xp:result.xp,credits:result.credits};
-  });
-};
+ const changeMissionStatus=(missionId:string,next:'Active'|'Available')=>{
+  setData(d=>{const result=transitionMission(d.missions,missionId,next);if(!result.ok){setToast(result.reason);return d;}setToast(result.reason);return {...d,missions:result.missions};});
+ };
+ const completeMission=(missionId:string)=>{
+  setData(d=>{const current=d.missions.find(m=>m.id===missionId);if(!current){setToast('Mission not found');return d;}const normalized=normalizeMission(current);if(normalized.status!=='Active'){setToast('Activate this mission before completing it');return d;}const result=transitionMission(d.missions,missionId,'Completed');if(!result.ok){setToast(result.reason);return d;}const reward=missionReward(normalized);setToast('Mission completed · '+reward.xp+' XP and '+reward.credits+' credits awarded');return {...d,missions:result.missions,xp:d.xp+reward.xp,credits:d.credits+reward.credits};});
+ };
+ const addMissionToPlanner=(missionId:string)=>{
+  setData(d=>{const result=assignMissionToPlanner(d.missions,d.tasks as any,missionId,today(),id());if(!result.ok){setToast(result.reason);return d;}setToast('Mission added to Daily Planner · no reward is awarded for assignment');return {...d,tasks:result.tasks};});
+ };
  const redeem=(r:Item)=>{
   setData(d=>{
     const result=redeemReward(d.rewards,d.credits,r.id);
@@ -59,7 +63,7 @@ function App(){
  <main><header><button className="hamb" onClick={()=>setMobile(true)}><Menu/></button><span>ARVENA　›　<b>{labels[page].toUpperCase()}</b></span><div className="chips"><i><Wallet size={14}/> {data.credits} credits</i><i><Zap size={14}/> LVL {getLevel(data.xp)}</i></div></header>
  <div className="content">
  {page==='Overview'&&<CommandCenter data={data} level={getLevel(data.xp)} xpIntoLevel={xpIntoLevel(data.xp)} onOpen={p=>open(p)} onNavigate={p=>setPage(p)} onToggleTask={taskId=>setData(d=>({...d,tasks:d.tasks.map(t=>t.id===taskId?{...t,done:!t.done}:t)}))}/>}
- {page==='Missions'&&<><Head page={page} onAdd={()=>open(page)}/>{list(page).map(m=><Record key={m.id} item={m} onEdit={()=>open(page,m)} onDelete={()=>remove(page,m)} extra={<><small>{m.category} · {m.difficulty} · {m.xp} XP</small>{!m.done&&<button className="primary mini" onClick={()=>completeMission(m)}>COMPLETE</button>}{m.done&&<b className="green">COMPLETED</b>}</>}/>)}{!data.missions.length&&<Empty text="No missions yet." onAdd={()=>open(page)}/>}</>}
+ {page==='Missions'&&<><Head page={page} onAdd={()=>open(page)}/><MissionControl missions={list(page)} onEdit={m=>open(page,m as Item)} onDelete={m=>{if(confirm('Delete this mission and its linked planner task, if any?')){setData(d=>({...d,missions:d.missions.filter(x=>x.id!==m.id),tasks:d.tasks.filter(t=>t.missionId!==m.id)}));setToast('Mission deleted')}}} onActivate={missionId=>{const m=data.missions.find(x=>x.id===missionId);changeMissionStatus(missionId,normalizeMission(m||{id:'',title:'',created:''}).status==='Active'?'Available':'Active')}} onComplete={completeMission} onPlanner={addMissionToPlanner}/></>}
  {page==='Planner'&&<><Head page={page} onAdd={()=>open(page)}/>{list(page).sort((a,b)=>a.date.localeCompare(b.date)).map(t=><div className="record" key={t.id}><Task item={t} toggle={()=>setData(d=>({...d,tasks:d.tasks.map(x=>x.id===t.id?{...x,done:!x.done}:x)}))}/><small>{t.date} · {t.category} · {t.priority}</small><Actions edit={()=>open(page,t)} del={()=>remove(page,t)}/></div>)}{!data.tasks.length&&<Empty text="Your planner is empty." onAdd={()=>open(page)}/>}</>}
  {page==='Dream Life'&&<><Head page={page} onAdd={()=>open(page)}/><div className="grid">{list(page).map(g=><article className="panel" key={g.id}><Actions edit={()=>open(page,g)} del={()=>remove(page,g)}/><span className="tag">{g.area}</span><h3>{g.title}</h3><p>{g.description}</p><div className="bar"><i style={{width:g.progress+'%'}}/></div><small>{g.progress}% · {g.target||'No target date'}</small><input type="range" min="0" max="100" value={g.progress} onChange={e=>setData(d=>({...d,goals:d.goals.map(x=>x.id===g.id?{...x,progress:+e.target.value}:x)}))}/></article>)}</div>{!data.goals.length&&<Empty text="Define the life you want to build." onAdd={()=>open(page)}/>}</>}
  {page==='Evolution'&&<><Head page={page}/><div className="stats">{[[Flame,'LEVEL',getLevel(data.xp)],[Zap,'TOTAL XP',data.xp],[Target,'MISSIONS DONE',data.missions.filter(x=>x.done).length],[BookOpen,'LEARNING DONE',data.knowledge.filter(x=>x.done).length]].map(([I,l,v]:any)=><Stat key={l} icon={I} label={l} value={v}/>)}</div><Panel title="LEVEL PROGRESSION"><p>{xpIntoLevel(data.xp)} / 500 XP to next level</p><div className="bar"><i style={{width:(xpIntoLevel(data.xp))/5+'%'}}/></div></Panel></>}
@@ -85,7 +89,7 @@ function Modal({page,initial,close,save}:{page:Page;initial:Item|null;close:()=>
  const title=labels[page]||page;
  return <div className="backdrop" onMouseDown={e=>{if(e.target===e.currentTarget)close()}}><form className="modal" onSubmit={e=>{e.preventDefault();save(e.currentTarget)}}><div className="modalhead"><div><small>ULS / RECORD</small><h2>{initial?'Edit record':title}</h2></div><button type="button" onClick={close}><X/></button></div>
  <label>Title<input name="title" required maxLength={120} defaultValue={initial?.title||''}/></label>
- {page==='Missions'&&<><label>Description<textarea name="description" defaultValue={initial?.description||''}/></label><div className="formgrid"><label>Category<select name="category" defaultValue={initial?.category||'Personal'}>{['Personal','Studies','Business','Health','Fitness','Learning'].map(x=><option>{x}</option>)}</select></label><label>Difficulty<select name="difficulty" defaultValue={initial?.difficulty||'Medium'}>{['Easy','Medium','Hard','Elite'].map(x=><option>{x}</option>)}</select></label></div><label>XP reward<input name="xp" type="number" min="0" defaultValue={initial?.xp??50}/></label><label>Deadline<input name="deadline" type="date" defaultValue={initial?.deadline||''}/></label></>}
+ {page==='Missions'&&<><label>Description<textarea name="description" defaultValue={initial?.description||''}/></label><div className="formgrid"><label>Category<select name="category" defaultValue={initial?.category||'Personal'}>{['Personal','Studies','Business','Health','Fitness','Learning'].map(x=><option>{x}</option>)}</select></label><label>Difficulty<select name="difficulty" defaultValue={initial?.difficulty||'Medium'}>{['Easy','Medium','Hard','Elite'].map(x=><option>{x}</option>)}</select></label></div><div className="formgrid"><label>Priority<select name="priority" defaultValue={initial?.priority||'Medium'}>{['Low','Medium','High','Critical'].map(x=><option>{x}</option>)}</select></label><label>XP reward<input name="xp" type="number" min="0" max="100000" defaultValue={initial?.xp??50}/></label></div><label>Deadline<input name="deadline" type="date" defaultValue={initial?.deadline||''}/></label></>}
  {page==='Planner'&&<><label>Date<input name="date" type="date" defaultValue={initial?.date||today()} required/></label><div className="formgrid"><label>Category<select name="category" defaultValue={initial?.category||'Personal'}>{['Personal','Studies','Business','Health','Fitness','Other'].map(x=><option>{x}</option>)}</select></label><label>Priority<select name="priority" defaultValue={initial?.priority||'Medium'}>{['Low','Medium','High'].map(x=><option>{x}</option>)}</select></label></div></>}
  {page==='Dream Life'&&<><label>Description<textarea name="description" defaultValue={initial?.description||''}/></label><div className="formgrid"><label>Life area<select name="area" defaultValue={initial?.area||'Personal'}>{['Career','Business','Financial','Home & Lifestyle','Health','Education','Family','Experiences','Personal'].map(x=><option>{x}</option>)}</select></label><label>Target date<input name="target" type="date" defaultValue={initial?.target||''}/></label></div><label>Progress<input name="progress" type="number" min="0" max="100" defaultValue={initial?.progress??0}/></label></>}
  {page==='Knowledge'&&<div className="formgrid"><label>Subject<input name="subject" required defaultValue={initial?.subject||''}/></label><label>Level<select name="level" defaultValue={initial?.level||'Fundamentals'}>{['Fundamentals','Beginner','Intermediate','Advanced','Expert'].map(x=><option>{x}</option>)}</select></label></div>}
