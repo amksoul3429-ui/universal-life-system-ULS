@@ -21,8 +21,10 @@ export default function KnowledgeLibrary({ courses, credits, onChange, onEconomy
     [courses],
   );
   const [selectedId, setSelectedId] = useState("");
-  const [courseEditor, setCourseEditor] = useState<KnowledgeCourse | null>(null);\n  const [courseOpen, setCourseOpen] = useState(false);
-  const [lessonEditor, setLessonEditor] = useState<KnowledgeLesson | null>(null);\n  const [lessonOpen, setLessonOpen] = useState(false);
+  const [courseEditor, setCourseEditor] = useState<KnowledgeCourse | null>(null);
+  const [courseOpen, setCourseOpen] = useState(false);
+  const [lessonEditor, setLessonEditor] = useState<KnowledgeLesson | null>(null);
+  const [lessonOpen, setLessonOpen] = useState(false);
   const [activeLesson, setActiveLesson] = useState("");
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [feedback, setFeedback] = useState<Record<string, string>>({});
