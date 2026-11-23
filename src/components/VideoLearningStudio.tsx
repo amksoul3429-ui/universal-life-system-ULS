@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { BookOpen, CheckCircle2, Clock, ExternalLink, Film, Link2, Pencil, Play, Plus, Search, Trash2, Video, X } from "lucide-react";
 import { normalizeVideo, parseVideoUrl, videoChapterTimestamp, videoEmbedUrl, videoSummary, updateVideoStatus, type LearningVideo } from "../core/video";
+import { searchYouTubeEducationalVideos, type YouTubeSearchItem } from "../core/youtube";
 import "./VideoLearningStudio.css";
 
 type Props = { videos: any[]; courses: any[]; onChange: (videos: LearningVideo[]) => void; onOpenKnowledge: () => void };
@@ -15,6 +16,15 @@ export default function VideoLearningStudio({ videos, courses, onChange, onOpenK
   const [query,setQuery]=useState("");
   const [chapterStart,setChapterStart]=useState(0);
   const [noteDraft,setNoteDraft]=useState<Record<string,string>>({});
+  const [apiKey,setApiKey]=useState(()=>localStorage.getItem("arvena-youtube-api-key")||"");
+  const [apiKeyDraft,setApiKeyDraft]=useState(()=>localStorage.getItem("arvena-youtube-api-key")||"");
+  const [discoveryQuery,setDiscoveryQuery]=useState("");
+  const [discoveryLevel,setDiscoveryLevel]=useState("All levels");
+  const [discoveryResults,setDiscoveryResults]=useState<YouTubeSearchItem[]>([]);
+  const [discovering,setDiscovering]=useState(false);
+  const [discoveryError,setDiscoveryError]=useState("");
+  const [discoveryNotice,setDiscoveryNotice]=useState("");
+  const [showKeySetup,setShowKeySetup]=useState(!localStorage.getItem("arvena-youtube-api-key"));
   const current=items.find(v=>v.id===selectedId)||items[0]||null;
   const summary=videoSummary(items);
   const visible=items.filter(v=>(filter==="All"||v.status===filter)&&[v.title,v.subject,v.description,v.provider].join(" ").toLowerCase().includes(query.toLowerCase()));
@@ -39,11 +49,27 @@ export default function VideoLearningStudio({ videos, courses, onChange, onOpenK
   const saveNotes=(video:LearningVideo)=>{onChange(items.map(v=>v.id===video.id?{...v,notes:noteDraft[video.id]??video.notes,updatedAt:new Date().toISOString()}:v));};
   const remove=(video:LearningVideo)=>{if(!confirm("Delete this video and its notes from your local library?"))return;onChange(items.filter(v=>v.id!==video.id));if(selectedId===video.id)setSelectedId("");};
   const openEditor=(video?:LearningVideo)=>{setEditing(video||null);setEditorOpen(true);};
+  const saveApiKey=()=>{const key=apiKeyDraft.trim();if(key)localStorage.setItem("arvena-youtube-api-key",key);else localStorage.removeItem("arvena-youtube-api-key");setApiKey(key);setDiscoveryError("");setDiscoveryNotice(key?"YouTube search is connected on this browser.":"YouTube API key removed.");};
+  const discover=async()=>{setDiscovering(true);setDiscoveryError("");setDiscoveryNotice("");try{const found=await searchYouTubeEducationalVideos(apiKey,discoveryQuery,discoveryLevel,15);setDiscoveryResults(found);setDiscoveryNotice(found.length?found.length+" matching videos found and ranked.":"No embeddable videos found for this topic. Try a broader lesson title.");}catch(error){setDiscoveryError(error instanceof Error?error.message:"YouTube search could not be completed.");}finally{setDiscovering(false);}};
+  const addRecommendation=(result:YouTubeSearchItem)=>{const parsed=parseVideoUrl(result.url);if(!parsed)return;const existing=items.find(v=>v.url===parsed.canonicalUrl);if(existing){setSelectedId(existing.id);setDiscoveryNotice("This video is already in your library.");return;}const next:LearningVideo={id:uid(),title:result.title,created:new Date().toISOString(),url:parsed.canonicalUrl,provider:"YouTube",description:result.description,durationMinutes:result.durationMinutes,subject:discoveryQuery.trim()||"General",level:discoveryLevel==="All levels"?"Beginner":discoveryLevel,transcript:"",visualUrl:"",resources:[],chapters:[],courseId:"",lessonId:"",status:"Saved",notes:"",updatedAt:new Date().toISOString()};onChange([next,...items]);setSelectedId(next.id);setDiscoveryNotice("Added to your video library. You can now watch and annotate it.");};
   const embed= current ? videoEmbedUrl(current)+(chapterStart?(current.provider==="YouTube"?"?start="+chapterStart:"#t="+chapterStart+"s"):"") : "";
   const linkedCourse=current?courses.find(c=>c.id===current.courseId):null;
   const linkedLesson=linkedCourse?.lessons?.find((l:any)=>l.id===current?.lessonId);
   return <div className="video-studio">
     <div className="head"><div><small>ARVENA / LEARNING MEDIA</small><h1>Video Learning Studio</h1><p>Watch, annotate and organize video lessons alongside your Universal Knowledge curriculum.</p></div><button className="primary" onClick={()=>openEditor()}><Plus size={15}/> ADD VIDEO</button></div>
+    <section className="vs-discovery panel">
+      <div className="vs-discovery-heading"><div><span className="tag">AUTOMATIC YOUTUBE DISCOVERY</span><h2>Find the best lessons for what you're studying</h2><p>Search existing public YouTube educational videos, compare their relevance and public engagement signals, then save the strongest matches to your library.</p></div><button className="secondary mini" onClick={()=>setShowKeySetup(v=>!v)}>{showKeySetup?"HIDE API SETUP":"YOUTUBE API SETTINGS"}</button></div>
+      {showKeySetup&&<div className="vs-key-setup"><label>YouTube Data API v3 key<input type="password" value={apiKeyDraft} onChange={e=>setApiKeyDraft(e.target.value)} placeholder="Paste your Google Cloud API key"/></label><button className="primary" onClick={saveApiKey}>SAVE KEY</button><p>One-time setup: create a Google Cloud project, enable YouTube Data API v3, create an API key, and restrict it to YouTube Data API v3 plus your app's website referrer. The key is stored only in this browser's local storage and is not included in ARVENA backups. A browser key is visible to the browser, so apply Google Cloud restrictions.</p><a href="https://console.cloud.google.com/apis/library/youtube.googleapis.com" target="_blank" rel="noreferrer">Open Google Cloud — YouTube Data API v3 <ExternalLink size={12}/></a></div>}
+      <form className="vs-discovery-form" onSubmit={e=>{e.preventDefault();void discover();}}>
+        <label>Subject or exact lesson topic<input value={discoveryQuery} onChange={e=>setDiscoveryQuery(e.target.value)} placeholder="e.g. JEE Advanced — Rotational Motion"/></label>
+        <label>Learning level<select value={discoveryLevel} onChange={e=>setDiscoveryLevel(e.target.value)}>{["All levels","Foundation","Beginner","Intermediate","JEE Main","JEE Advanced","Advanced"].map(x=><option key={x}>{x}</option>)}</select></label>
+        <button className="primary" disabled={discovering||!discoveryQuery.trim()||!apiKey}>{discovering?"SEARCHING YOUTUBE…":"FIND & RANK VIDEOS"}</button>
+      </form>
+      {discoveryError&&<p className="vs-discovery-error">{discoveryError}</p>}
+      {discoveryNotice&&<p className="vs-discovery-notice">{discoveryNotice}</p>}
+      {discoveryResults.length>0&&<div className="vs-results"><div className="vs-results-title">RECOMMENDED VIDEOS <span>Ranked by topic match, public engagement, channel reach, duration and freshness — not a guarantee of teaching quality.</span></div>{discoveryResults.map((r,i)=><article className="vs-result" key={r.id}><img src={r.thumbnail} alt="" loading="lazy"/><div className="vs-result-copy"><b>{i+1}. {r.title}</b><small>{r.channelTitle} · {r.durationMinutes} min · {r.views.toLocaleString()} views · {new Date(r.publishedAt).toLocaleDateString()}</small><p>{r.description.slice(0,190)}{r.description.length>190?"…":""}</p><div className="vs-result-signals"><span>{r.score}% match score</span>{r.scoreReasons.map(reason=><i key={reason}>{reason}</i>)}</div></div><div className="vs-result-actions"><button className="primary mini" onClick={()=>addRecommendation(r)}>SAVE VIDEO</button><a href={r.url} target="_blank" rel="noreferrer">YouTube <ExternalLink size={11}/></a></div></article>)}</div>}
+      {!apiKey&&<p className="vs-key-needed">Connect YouTube Data API once to enable automatic video discovery. You will not need to search YouTube manually after setup.</p>}
+    </section>
     <div className="stats">
       <div className="stat"><Video/><div><small>LIBRARY</small><b>{summary.total}</b></div></div>
       <div className="stat"><CheckCircle2/><div><small>WATCHED</small><b>{summary.watched}</b></div></div>
@@ -51,7 +77,7 @@ export default function VideoLearningStudio({ videos, courses, onChange, onOpenK
       <div className="stat"><Clock/><div><small>WATCH TIME</small><b>{summary.minutes} min</b></div></div>
     </div>
     <div className="vs-toolbar">
-      <label className="vs-search"><Search size={16}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search videos or subjects"/></label>
+      <label className="vs-search"><Search size={16}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search your saved videos or subjects"/></label>
       <div className="vs-filters">{["All","Saved","In Progress","Watched"].map(s=><button key={s} className={filter===s?"active":""} onClick={()=>setFilter(s)}>{s}</button>)}</div>
     </div>
     <div className="vs-layout">
@@ -60,10 +86,10 @@ export default function VideoLearningStudio({ videos, courses, onChange, onOpenK
         {visible.map(v=><button key={v.id} className={"vs-item "+(current?.id===v.id?"selected":"")} onClick={()=>{setSelectedId(v.id);setChapterStart(0);}}>
           <span className="vs-thumb"><Film size={18}/></span><span className="vs-item-copy"><b>{v.title}</b><small>{v.subject} · {v.provider}</small><i className={"vs-status "+v.status.toLowerCase().replace(" ","-")}>{v.status}</i></span>
         </button>)}
-        {!visible.length&&<div className="vs-empty">No matching videos. Add a YouTube or Vimeo lesson to begin.</div>}
+        {!visible.length&&<div className="vs-empty">No matching saved videos yet. Use automatic YouTube discovery above to find lessons.</div>}
       </aside>
       <section className="vs-player-area">
-        {!current&&<div className="vs-welcome"><Video size={34}/><h2>Your learning media workspace</h2><p>Save a video from YouTube or Vimeo, then attach notes, transcripts, chapters and supporting resources.</p><button className="primary" onClick={()=>openEditor()}><Plus size={15}/> ADD YOUR FIRST VIDEO</button></div>}
+        {!current&&<div className="vs-welcome"><Video size={34}/><h2>Your learning media workspace</h2><p>Find existing YouTube lessons above, then watch, annotate and organize them here. You can also add a Vimeo link manually.</p><button className="primary" onClick={()=>openEditor()}><Plus size={15}/> ADD YOUR FIRST VIDEO</button></div>}
         {current&&<>
           <div className="vs-player">
             <iframe key={current.id+"-"+chapterStart} src={embed} title={"Video lesson: "+current.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen referrerPolicy="strict-origin-when-cross-origin"/>
