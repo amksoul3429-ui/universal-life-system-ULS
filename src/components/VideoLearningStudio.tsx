@@ -19,6 +19,8 @@ export default function VideoLearningStudio({ videos, courses, onChange, onOpenK
   const [apiKey,setApiKey]=useState(()=>localStorage.getItem("arvena-youtube-api-key")||"");
   const [apiKeyDraft,setApiKeyDraft]=useState(()=>localStorage.getItem("arvena-youtube-api-key")||"");
   const [discoveryQuery,setDiscoveryQuery]=useState("");
+  const [selectedCourseLesson,setSelectedCourseLesson]=useState("");
+  const lessonOptions=courses.flatMap((course:any)=>(course.lessons||[]).map((lesson:any)=>({value:course.id+"::"+lesson.id,label:course.title+" — "+lesson.title,query:course.title+" "+lesson.title})));
   const [discoveryLevel,setDiscoveryLevel]=useState("All levels");
   const [discoveryResults,setDiscoveryResults]=useState<YouTubeSearchItem[]>([]);
   const [discovering,setDiscovering]=useState(false);
@@ -61,6 +63,7 @@ export default function VideoLearningStudio({ videos, courses, onChange, onOpenK
       <div className="vs-discovery-heading"><div><span className="tag">AUTOMATIC YOUTUBE DISCOVERY</span><h2>Find the best lessons for what you're studying</h2><p>Search existing public YouTube educational videos, compare their relevance and public engagement signals, then save the strongest matches to your library.</p></div><button className="secondary mini" onClick={()=>setShowKeySetup(v=>!v)}>{showKeySetup?"HIDE API SETUP":"YOUTUBE API SETTINGS"}</button></div>
       {showKeySetup&&<div className="vs-key-setup"><label>YouTube Data API v3 key<input type="password" value={apiKeyDraft} onChange={e=>setApiKeyDraft(e.target.value)} placeholder="Paste your Google Cloud API key"/></label><button className="primary" onClick={saveApiKey}>SAVE KEY</button><p>One-time setup: create a Google Cloud project, enable YouTube Data API v3, create an API key, and restrict it to YouTube Data API v3 plus your app's website referrer. The key is stored only in this browser's local storage and is not included in ARVENA backups. A browser key is visible to the browser, so apply Google Cloud restrictions.</p><a href="https://console.cloud.google.com/apis/library/youtube.googleapis.com" target="_blank" rel="noreferrer">Open Google Cloud — YouTube Data API v3 <ExternalLink size={12}/></a></div>}
       <form className="vs-discovery-form" onSubmit={e=>{e.preventDefault();void discover();}}>
+        <label>Choose a lesson (optional)<select value={selectedCourseLesson} onChange={e=>{setSelectedCourseLesson(e.target.value);const selected=lessonOptions.find(x=>x.value===e.target.value);if(selected)setDiscoveryQuery(selected.query);}}><option value="">Search any topic</option>{lessonOptions.map(x=><option key={x.value} value={x.value}>{x.label}</option>)}</select></label>
         <label>Subject or exact lesson topic<input value={discoveryQuery} onChange={e=>setDiscoveryQuery(e.target.value)} placeholder="e.g. JEE Advanced — Rotational Motion"/></label>
         <label>Learning level<select value={discoveryLevel} onChange={e=>setDiscoveryLevel(e.target.value)}>{["All levels","Foundation","Beginner","Intermediate","JEE Main","JEE Advanced","Advanced"].map(x=><option key={x}>{x}</option>)}</select></label>
         <button className="primary" disabled={discovering||!discoveryQuery.trim()||!apiKey}>{discovering?"SEARCHING YOUTUBE…":"FIND & RANK VIDEOS"}</button>
