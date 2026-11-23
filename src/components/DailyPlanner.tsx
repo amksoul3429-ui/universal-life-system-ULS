@@ -15,7 +15,8 @@ const monthDays=(date:string)=>{const d=new Date(date+"T12:00:00"),first=new Dat
 export default function DailyPlanner({tasks,onAdd,onEdit,onDelete,onToggle}:Props){
  const [selected,setSelected]=useState(localDate(new Date()));
  const [view,setView]=useState<View>("day");
- const [showCompleted,setShowCompleted]=useState(true);\n const [overdueOnly,setOverdueOnly]=useState(false);
+ const [showCompleted,setShowCompleted]=useState(true);
+ const [overdueOnly,setOverdueOnly]=useState(false);
  const [category,setCategory]=useState("All");
  const [priority,setPriority]=useState("All");
  const [sort,setSort]=useState<PlannerSort>("time");
