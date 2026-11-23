@@ -34,7 +34,7 @@ export function getDaySummary(tasks: PlannerTask[], date: string) {
   const day = tasks.filter(task => task.date === date);
   const completed = day.filter(task => task.done).length;
   const scheduled = day.filter(task => validTime(task.startTime)).length;
-  const plannedMinutes = day.reduce((sum, task) => sum + (Number(task.durationMinutes) || 0), 0);
+  const plannedMinutes = day.filter(task => validTime(task.startTime)).reduce((sum, task) => sum + (Number(task.durationMinutes) || 0), 0);
   return { total: day.length, completed, remaining: day.length - completed, scheduled, plannedMinutes, percent: day.length ? Math.round(completed / day.length * 100) : 0 };
 }
 export function syncMissionTask(tasks: PlannerTask[], mission: {id:string;title:string;category?:string;priority?:string;deadline?:string}) {
