@@ -7,7 +7,8 @@ const uid=()=>crypto.randomUUID();
 const categories=["Personal","Learning","Experience","Purchase","Milestone","Rest & Recovery"];
 export default function RewardsAchievements({rewards,xp,credits,metrics,claimedAchievements,onSaveReward,onDeleteReward,onRedeem,onFulfill,onClaimAchievement}:Props){
  const [showForm,setShowForm]=useState(false),[editing,setEditing]=useState<RewardItem|null>(null),[filter,setFilter]=useState("All");
- const normalizedRewards=useMemo(()=>rewards.map(normalizeReward).filter((r):r is RewardItem=>!!r),[rewards]);\n const level=operatorLevel(xp),rank=rankForXp(xp),into=xp%500,summary=rewardSummary(normalizedRewards,credits),achievements=achievementState(metrics,claimedAchievements);
+ const normalizedRewards=useMemo(()=>rewards.map(normalizeReward).filter((r):r is RewardItem=>!!r),[rewards]);
+ const level=operatorLevel(xp),rank=rankForXp(xp),into=xp%500,summary=rewardSummary(normalizedRewards,credits),achievements=achievementState(metrics,claimedAchievements);
  const [title,setTitle]=useState(""),[description,setDescription]=useState(""),[type,setType]=useState("Personal"),[cost,setCost]=useState("50");
  const open=(item?:RewardItem)=>{setEditing(item||null);setTitle(item?.title||"");setDescription(item?.description||"");setType(item?.type||"Personal");setCost(String(item?.cost||50));setShowForm(true);};
  const save=(e:FormEvent)=>{e.preventDefault();const n=Math.floor(Number(cost));if(!title.trim()||!Number.isFinite(n)||n<1)return;onSaveReward({id:editing?.id||uid(),title:title.trim(),created:editing?.created||new Date().toISOString(),description:description.trim(),type,cost:n,status:editing?.status||"available",redeemed:editing?.redeemed||false,...(editing?.redeemedAt?{redeemedAt:editing.redeemedAt}:{}),...(editing?.fulfilledAt?{fulfilledAt:editing.fulfilledAt}:{})});setShowForm(false);setEditing(null);};
