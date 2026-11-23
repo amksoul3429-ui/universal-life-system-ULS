@@ -1,5 +1,5 @@
 /** ARVENA reward economy: deterministic ranks, achievements and user-controlled redemption. */
-export type RewardItem = { id:string; title:string; created:string; description?:string; type?:string; cost?:number; redeemed?:boolean; status?:"available"|"redeemed"|"fulfilled"; redeemedAt?:string; fulfilledAt?:string };
+export type RewardItem = { id:string; title:string; created:string; description?:string; type?:string; cost:number; redeemed?:boolean; status:"available"|"redeemed"|"fulfilled"; redeemedAt?:string; fulfilledAt?:string };
 export type RewardMetrics = { missionsCompleted:number; coursesCompleted:number; lessonsCompleted:number; habitCheckIns:number; bestHabitStreak:number; goalsCompleted:number };
 export type Achievement = { id:string; title:string; description:string; category:"Missions"|"Knowledge"|"Evolution"|"Goals"; requirement:string; credits:number; xp:number; test:(m:RewardMetrics)=>boolean };
 export const RANKS = [
@@ -44,8 +44,8 @@ export function redeemPersonalReward(values:unknown[],credits:number,id:string,n
  const rewards=values.map(normalizeReward).filter((r):r is RewardItem=>!!r),target=rewards.find(r=>r.id===id);
  if(!target)return {ok:false as const,rewards,credits,reason:"Reward not found"};
  if(target.status!=="available")return {ok:false as const,rewards,credits,reason:"This reward has already been redeemed"};
- if(target.cost!<=0||credits<target.cost!)return {ok:false as const,rewards,credits,reason:"You do not have enough credits"};
- return {ok:true as const,rewards:rewards.map(r=>r.id===id?{...r,status:"redeemed" as const,redeemed:true,redeemedAt:now}:r),credits:credits-target.cost!,reason:"Reward redeemed — mark it fulfilled when you have enjoyed it"};
+ if(target.cost<=0||credits<target.cost)return {ok:false as const,rewards,credits,reason:"You do not have enough credits"};
+ return {ok:true as const,rewards:rewards.map(r=>r.id===id?{...r,status:"redeemed" as const,redeemed:true,redeemedAt:now}:r),credits:credits-target.cost,reason:"Reward redeemed — mark it fulfilled when you have enjoyed it"};
 }
 export function fulfillPersonalReward(values:unknown[],id:string,now=new Date().toISOString()){
  const rewards=values.map(normalizeReward).filter((r):r is RewardItem=>!!r),target=rewards.find(r=>r.id===id);
@@ -55,5 +55,5 @@ export function fulfillPersonalReward(values:unknown[],id:string,now=new Date().
 }
 export function rewardSummary(values:unknown[],credits:number){
  const rewards=values.map(normalizeReward).filter((r):r is RewardItem=>!!r);
- return {availableCredits:Math.max(0,Math.floor(credits)),totalRewards:rewards.length,available:rewards.filter(r=>r.status==="available").length,redeemed:rewards.filter(r=>r.status==="redeemed").length,fulfilled:rewards.filter(r=>r.status==="fulfilled").length,spent:rewards.filter(r=>r.status!=="available").reduce((n,r)=>n+r.cost!,0)};
+ return {availableCredits:Math.max(0,Math.floor(credits)),totalRewards:rewards.length,available:rewards.filter(r=>r.status==="available").length,redeemed:rewards.filter(r=>r.status==="redeemed").length,fulfilled:rewards.filter(r=>r.status==="fulfilled").length,spent:rewards.filter(r=>r.status!=="available").reduce((n,r)=>n+r.cost,0)};
 }
